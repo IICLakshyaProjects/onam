@@ -1,0 +1,136 @@
+"use client";
+
+import { onamConfig } from "@/config/onam";
+import type { Scene } from "@/components/presentation/types";
+import PreviousYearVideo from "@/components/presentation/PreviousYearVideo";
+import CountdownScene from "@/components/presentation/CountdownScene";
+import PosterReveal from "@/components/presentation/PosterReveal";
+import ProgramsReveal from "@/components/presentation/ProgramsReveal";
+import TeamReveal from "@/components/presentation/TeamReveal";
+import DateReveal from "@/components/presentation/DateReveal";
+import Fireworks from "@/components/effects/Fireworks";
+import Particles from "@/components/effects/Particles";
+import Petals from "@/components/effects/Petals";
+
+type SceneRendererProps = {
+  scene: Scene;
+  runId: number;
+  paused: boolean;
+  onSceneComplete: () => void;
+  onCountdownValueChange: (value: number) => void;
+  onProgramIndexChange: (index: number) => void;
+  onTeamIndexChange: (index: number) => void;
+};
+
+/**
+ * Maps the current state-machine scene to its component, keyed by
+ * `${scene}-${runId}` so a restart (bumped runId) or a scene change always
+ * mounts a fresh instance — timers and animations start clean every time,
+ * and the outgoing scene's effects/timers are torn down by React on unmount.
+ */
+export default function SceneRenderer({
+  scene,
+  runId,
+  paused,
+  onSceneComplete,
+  onCountdownValueChange,
+  onProgramIndexChange,
+  onTeamIndexChange,
+}: SceneRendererProps) {
+  const key = `${scene}-${runId}`;
+  const { media, durations, programs, teams, dateReveal } = onamConfig;
+
+  switch (scene) {
+    case "previous-video":
+      return (
+        <PreviousYearVideo
+          key={key}
+          src={media.previousYearVideo}
+          fallbackDurationMs={durations.previousVideoFallback}
+          paused={paused}
+          onComplete={onSceneComplete}
+        />
+      );
+
+    case "countdown":
+      return (
+        <CountdownScene
+          key={key}
+          seconds={durations.countdownSeconds}
+          stepMs={durations.countdownStepMs}
+          paused={paused}
+          onComplete={onSceneComplete}
+          onValueChange={onCountdownValueChange}
+        />
+      );
+
+    case "poster":
+      return (
+        <PosterReveal
+          key={key}
+          src={media.poster}
+          durationMs={durations.posterDuration}
+          paused={paused}
+          onComplete={onSceneComplete}
+        />
+      );
+
+    case "programs":
+      return (
+        <ProgramsReveal
+          key={key}
+          programs={programs}
+          stepMs={durations.programStepMs}
+          outroMs={durations.programsOutroMs}
+          paused={paused}
+          onComplete={onSceneComplete}
+          onIndexChange={onProgramIndexChange}
+        />
+      );
+
+    case "teams":
+      return (
+        <TeamReveal
+          key={key}
+          teams={teams}
+          stepMs={durations.teamStepMs}
+          outroMs={durations.teamsOutroMs}
+          paused={paused}
+          onComplete={onSceneComplete}
+          onIndexChange={onTeamIndexChange}
+        />
+      );
+
+    case "date":
+      return (
+        <DateReveal
+          key={key}
+          dateReveal={dateReveal}
+          buildupMs={durations.dateBuildupMs}
+          holdMs={durations.dateHoldMs}
+          paused={paused}
+          onComplete={onSceneComplete}
+        />
+      );
+
+    case "finished":
+      return (
+        <div key={key} className="onam-stage scene-enter flex flex-col items-center justify-center">
+          <div className="light-rays" />
+          <Particles density={40} paused={paused} />
+          <Petals density={16} paused={paused} />
+          <Fireworks auto autoIntervalMs={1600} paused={paused} />
+          <div className="relative z-10 flex flex-col items-center gap-4 text-center">
+            <p className="text-base uppercase tracking-[0.6em] text-onam-gold/80">{dateReveal.line1}</p>
+            <span className="text-shimmer text-[10rem] font-black leading-none sm:text-[14rem]">
+              {dateReveal.month} {dateReveal.day}
+            </span>
+            <p className="text-2xl uppercase tracking-[0.4em] text-onam-cream/70">{dateReveal.line2}</p>
+          </div>
+        </div>
+      );
+
+    default:
+      return null;
+  }
+}

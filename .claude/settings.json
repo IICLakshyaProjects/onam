@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat /tmp/onam-server.log | tail -60)",
+      "Read(//tmp/**)"
+    ]
+  }
+}
