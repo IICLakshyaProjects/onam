@@ -25,7 +25,9 @@ export const onamConfig = {
   },
 
   media: {
-    previousYearVideo: "/media/previous-onam.mp4",
+    // Hosted remotely (the local /public/media/previous-onam.mp4 copy was removed).
+    // Swap back to a local "/media/previous-onam.mp4" path any time by dropping the file in public/media/.
+    previousYearVideo: "https://lakshyamailerimages.s3.ap-south-1.amazonaws.com/Lakshyaarav+Promo+(1).mp4",
     poster: "/media/onam-poster.png",
   },
 
