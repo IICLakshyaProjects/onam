@@ -123,6 +123,35 @@ body {
   pointer-events: none;
 }
 
+/* Gently floating decorative motifs (chenda / lamp / pookalam / leaf) used behind the title hook. */
+.floaty {
+  animation: floaty 7s ease-in-out infinite;
+}
+
+.floaty-alt {
+  animation: floaty-alt 8.5s ease-in-out infinite;
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-22px) rotate(4deg);
+  }
+}
+
+@keyframes floaty-alt {
+  0%,
+  100% {
+    transform: translateY(0) rotate(5deg);
+  }
+  50% {
+    transform: translateY(18px) rotate(-5deg);
+  }
+}
+
 .text-shimmer {
   background: linear-gradient(100deg, var(--onam-gold) 20%, var(--onam-cream) 40%, var(--onam-amber) 60%, var(--onam-gold) 80%);
   background-size: 220% auto;
@@ -267,6 +296,63 @@ body {
 }
 
 /* ---------------------------------------------------------------------- */
+/* Title hook                                                              */
+/* ---------------------------------------------------------------------- */
+
+.title-presents-in {
+  animation: title-presents-in 1200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes title-presents-in {
+  0% {
+    opacity: 0;
+    letter-spacing: 0.9em;
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    letter-spacing: 0.5em;
+    filter: blur(0);
+  }
+}
+
+.title-presents-settle {
+  animation: title-presents-settle 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes title-presents-settle {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(-2.2rem) scale(0.72);
+  }
+}
+
+.title-heading-in {
+  animation: title-heading-in 1500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes title-heading-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.55) rotate(-3deg);
+    filter: blur(14px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.06) rotate(1deg);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* ---------------------------------------------------------------------- */
 /* Date reveal                                                             */
 /* ---------------------------------------------------------------------- */
 
@@ -323,6 +409,11 @@ body {
   .date-buildup-pulse,
   .date-reveal-day,
   .date-reveal-label,
+  .title-presents-in,
+  .title-presents-settle,
+  .title-heading-in,
+  .floaty,
+  .floaty-alt,
   .light-rays,
   .text-shimmer,
   .scene-enter {

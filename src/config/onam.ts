@@ -24,6 +24,13 @@ export const onamConfig = {
     year: new Date().getFullYear().toString(),
   },
 
+  /** Opening hook shown before the previous-year video — presenter credit, then the title. */
+  titleHook: {
+    presentedBy: "IIC Lakshya Presents",
+    heading: "ONAM",
+    subheading: "A Golden Harvest of Togetherness",
+  },
+
   media: {
     // Hosted remotely (the local /public/media/previous-onam.mp4 copy was removed).
     // Swap back to a local "/media/previous-onam.mp4" path any time by dropping the file in public/media/.
@@ -35,6 +42,10 @@ export const onamConfig = {
   loop: true,
 
   durations: {
+    /** How long the "presented by" credit is held alone before the main title bursts in (ms). */
+    titlePresentedByMs: 2600,
+    /** How long the main title hook is held on screen before moving on to the video (ms). */
+    titleHeadingMs: 4200,
     /** Fallback duration (ms) for the previous-year video scene if the video is missing / fails to load. */
     previousVideoFallback: 8000,
     /** Starting number for the countdown; it always counts all the way down through 0 (one visual beat per second). */

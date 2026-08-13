@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import Petals from "@/components/effects/Petals";
+import Confetti from "@/components/effects/Confetti";
 import Fireworks from "@/components/effects/Fireworks";
+import ChendaBeat from "@/components/effects/ChendaBeat";
 
 type CountdownSceneProps = {
   seconds: number;
@@ -40,7 +42,9 @@ export default function CountdownScene({
     <div className="onam-stage scene-enter flex items-center justify-center">
       <div className="light-rays" />
       <Petals density={16} paused={paused} />
+      <Confetti density={20} burstTrigger={stepIndex} paused={paused} />
       <Fireworks burstTrigger={stepIndex} paused={paused} />
+      <ChendaBeat beatTrigger={stepIndex} paused={paused} />
 
       <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">
         Get Ready

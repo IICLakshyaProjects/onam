@@ -5,6 +5,7 @@ import type { Program } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import Petals from "@/components/effects/Petals";
 import Particles from "@/components/effects/Particles";
+import Confetti from "@/components/effects/Confetti";
 
 type ProgramsRevealProps = {
   programs: Program[];
@@ -54,6 +55,7 @@ export default function ProgramsReveal({
       <div className="light-rays" />
       <Particles density={20} paused={paused} />
       <Petals density={14} paused={paused} />
+      <Confetti density={16} burstTrigger={index} paused={paused} />
 
       <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">
         Programs &amp; Events

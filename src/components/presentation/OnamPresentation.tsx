@@ -7,7 +7,7 @@ import SceneRenderer from "@/components/presentation/SceneRenderer";
 import PresentationControls from "@/components/controls/PresentationControls";
 
 const INITIAL_STATE: PresentationState = {
-  currentScene: "previous-video",
+  currentScene: "title",
   currentProgram: 0,
   currentTeam: 0,
   countdownValue: onamConfig.durations.countdownSeconds,

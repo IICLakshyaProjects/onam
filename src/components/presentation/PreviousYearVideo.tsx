@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePausableSequence } from "@/lib/usePausableSequence";
+import { useFirstInteraction } from "@/lib/useFirstInteraction";
 import Petals from "@/components/effects/Petals";
+import Confetti from "@/components/effects/Confetti";
 
 type PreviousYearVideoProps = {
   src: string;
@@ -12,10 +14,12 @@ type PreviousYearVideoProps = {
 };
 
 /**
- * Fullscreen, muted, autoplaying highlight reel from last year's celebration.
- * Falls back to a cinematic placeholder (and a timed auto-advance) if the
- * video file is missing or fails to load, so a blank asset can never break
- * the sequence.
+ * Fullscreen, autoplaying highlight reel from last year's celebration.
+ * Tries to autoplay WITH sound first; if the browser's autoplay policy
+ * blocks that, it falls back to muted autoplay (so playback never breaks)
+ * and recovers sound automatically on the first key/tap/click. Falls back
+ * to a cinematic placeholder (and a timed auto-advance) if the video file
+ * is missing or fails to load.
  */
 export default function PreviousYearVideo({
   src,
@@ -25,19 +29,45 @@ export default function PreviousYearVideo({
 }: PreviousYearVideoProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [failed, setFailed] = useState(false);
+  const [needsSoundGesture, setNeedsSoundGesture] = useState(false);
 
+  // Initial autoplay attempt — try WITH sound first; only fall back to muted
+  // if the browser's autoplay policy blocks it (never blocks a muted play()).
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = false;
+    video.play().catch(() => {
+      video.muted = true;
+      setNeedsSoundGesture(true);
+      video.play().catch(() => setFailed(true));
+    });
+    // Runs once when this scene instance mounts.
+  }, []);
+
+  // Reflect pause/resume from the presentation state machine (kept separate
+  // from the mount-time autoplay negotiation above so toggling pause never
+  // re-triggers the muted/unmuted dance).
   useEffect(() => {
     const video = videoRef.current;
     if (!video || failed) return;
-    // Setting `muted` imperatively (not just the JSX attribute) is the
-    // reliable way to satisfy browser autoplay policies before calling play().
-    video.muted = true;
     if (paused) {
       video.pause();
-    } else {
-      video.play().catch(() => setFailed(true));
+    } else if (video.ended === false) {
+      video.play().catch(() => {});
     }
   }, [paused, failed]);
+
+  // Most browsers block unmuted autoplay outright but reliably allow sound
+  // right after the first real user gesture — recover it there.
+  useFirstInteraction(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.muted = false;
+      if (!paused) video.play().catch(() => {});
+    }
+    setNeedsSoundGesture(false);
+  });
 
   // Only used when the video can't play at all — advances the presentation on a timer instead.
   usePausableSequence(
@@ -55,8 +85,6 @@ export default function PreviousYearVideo({
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover"
           src={src}
-          autoPlay
-          muted
           playsInline
           onEnded={onComplete}
           onError={() => setFailed(true)}
@@ -66,6 +94,12 @@ export default function PreviousYearVideo({
       )}
       <div className="cinematic-overlay" />
       <Petals density={14} paused={paused} />
+      <Confetti density={10} paused={paused} />
+      {needsSoundGesture && (
+        <p className="absolute top-8 right-8 z-10 text-xs uppercase tracking-[0.3em] text-onam-gold/50">
+          Press any key for sound
+        </p>
+      )}
       <div className="absolute bottom-10 left-0 right-0 flex flex-col items-center gap-2 text-center">
         <p className="text-sm uppercase tracking-[0.5em] text-onam-gold/80">Last Year&apos;s Memories</p>
       </div>

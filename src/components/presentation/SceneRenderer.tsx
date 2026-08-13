@@ -2,6 +2,7 @@
 
 import { onamConfig } from "@/config/onam";
 import type { Scene } from "@/components/presentation/types";
+import TitleHook from "@/components/presentation/TitleHook";
 import PreviousYearVideo from "@/components/presentation/PreviousYearVideo";
 import CountdownScene from "@/components/presentation/CountdownScene";
 import PosterReveal from "@/components/presentation/PosterReveal";
@@ -11,6 +12,7 @@ import DateReveal from "@/components/presentation/DateReveal";
 import Fireworks from "@/components/effects/Fireworks";
 import Particles from "@/components/effects/Particles";
 import Petals from "@/components/effects/Petals";
+import Confetti from "@/components/effects/Confetti";
 
 type SceneRendererProps = {
   scene: Scene;
@@ -38,9 +40,21 @@ export default function SceneRenderer({
   onTeamIndexChange,
 }: SceneRendererProps) {
   const key = `${scene}-${runId}`;
-  const { media, durations, programs, teams, dateReveal } = onamConfig;
+  const { media, durations, programs, teams, dateReveal, titleHook } = onamConfig;
 
   switch (scene) {
+    case "title":
+      return (
+        <TitleHook
+          key={key}
+          titleHook={titleHook}
+          presentedByMs={durations.titlePresentedByMs}
+          headingMs={durations.titleHeadingMs}
+          paused={paused}
+          onComplete={onSceneComplete}
+        />
+      );
+
     case "previous-video":
       return (
         <PreviousYearVideo
@@ -119,6 +133,7 @@ export default function SceneRenderer({
           <div className="light-rays" />
           <Particles density={40} paused={paused} />
           <Petals density={16} paused={paused} />
+          <Confetti density={20} paused={paused} />
           <Fireworks auto autoIntervalMs={1600} paused={paused} />
           <div className="relative z-10 flex flex-col items-center gap-4 text-center">
             <p className="text-base uppercase tracking-[0.6em] text-onam-gold/80">{dateReveal.line1}</p>

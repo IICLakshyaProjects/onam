@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import Particles from "@/components/effects/Particles";
 import Petals from "@/components/effects/Petals";
+import Confetti from "@/components/effects/Confetti";
 
 type PosterRevealProps = {
   src: string;
@@ -24,6 +25,7 @@ export default function PosterReveal({ src, durationMs, paused, onComplete }: Po
       <div className="glow-orb h-[40rem] w-[40rem]" />
       <Particles density={36} paused={paused} />
       <Petals density={12} paused={paused} />
+      <Confetti density={14} paused={paused} />
 
       <div className="poster-reveal relative z-10 flex h-[82%] w-[86%] items-center justify-center sm:h-[78%] sm:w-[62%]">
         {!failed ? (

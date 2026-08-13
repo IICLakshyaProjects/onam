@@ -6,6 +6,7 @@ import { usePausableSequence } from "@/lib/usePausableSequence";
 import Fireworks from "@/components/effects/Fireworks";
 import Particles from "@/components/effects/Particles";
 import Petals from "@/components/effects/Petals";
+import Confetti from "@/components/effects/Confetti";
 
 type DateRevealProps = {
   dateReveal: (typeof onamConfig)["dateReveal"];
@@ -33,6 +34,7 @@ export default function DateReveal({ dateReveal, buildupMs, holdMs, paused, onCo
       <div className="light-rays" />
       <Particles density={revealed ? 55 : 24} paused={paused} />
       <Petals density={revealed ? 20 : 10} paused={paused} />
+      <Confetti density={revealed ? 26 : 12} burstTrigger={revealed ? "revealed" : undefined} paused={paused} />
       <Fireworks auto={revealed} autoIntervalMs={900} paused={paused} />
 
       {!revealed ? (
