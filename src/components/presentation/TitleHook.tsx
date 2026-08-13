@@ -6,10 +6,12 @@ import { usePausableSequence } from "@/lib/usePausableSequence";
 import Petals from "@/components/effects/Petals";
 import Confetti from "@/components/effects/Confetti";
 import Particles from "@/components/effects/Particles";
-import { ChendaMotif, LampMotif, PookalamMotif, LeafMotif } from "@/components/effects/OnamMotifs";
+import OnamMotifField from "@/components/effects/OnamMotifField";
+import RangoliGlow from "@/components/effects/RangoliGlow";
 
 type TitleHookProps = {
   titleHook: (typeof onamConfig)["titleHook"];
+  motifImages: (typeof onamConfig)["media"]["motifImages"];
   presentedByMs: number;
   headingMs: number;
   paused: boolean;
@@ -20,9 +22,10 @@ type TitleHookProps = {
  * Opening hook shown before the previous-year video: a presenter credit
  * ("IIC Lakshya Presents") that settles into a small caption, then the main
  * title bursts in — over a softly animated backdrop of traditional Onam
- * motifs (chenda, lamp, pookalam, leaf) drifting behind the text.
+ * motifs (chenda, pulikali, lamp, pookalam, leaf, boat) drifting behind the
+ * text, plus a pulsing rangoli-style floor glow.
  */
-export default function TitleHook({ titleHook, presentedByMs, headingMs, paused, onComplete }: TitleHookProps) {
+export default function TitleHook({ titleHook, motifImages, presentedByMs, headingMs, paused, onComplete }: TitleHookProps) {
   const [phase, setPhase] = useState<0 | 1>(0);
 
   usePausableSequence(
@@ -39,17 +42,17 @@ export default function TitleHook({ titleHook, presentedByMs, headingMs, paused,
     <div className="onam-stage scene-enter flex flex-col items-center justify-center overflow-hidden">
       <div className="light-rays" />
       <div className="glow-orb h-[38rem] w-[38rem]" />
+      <RangoliGlow />
       <Particles density={30} paused={paused} />
       <Petals density={16} paused={paused} />
       <Confetti density={14} burstTrigger={revealed ? "revealed" : undefined} paused={paused} />
 
       {/* Drifting Onam motifs — kept to the edges so they never fight the text. */}
-      <ChendaMotif className="floaty absolute left-[6%] top-[16%] h-20 w-20 text-onam-gold/25 sm:h-28 sm:w-28" />
-      <LampMotif className="floaty-alt absolute right-[8%] top-[20%] h-24 w-24 text-onam-amber/25 sm:h-32 sm:w-32" />
-      <PookalamMotif className="floaty absolute left-[10%] bottom-[14%] h-20 w-20 text-onam-crimson/25 sm:h-28 sm:w-28" />
-      <LeafMotif className="floaty-alt absolute right-[10%] bottom-[18%] h-24 w-24 text-onam-green/30 sm:h-32 sm:w-32" />
-      <ChendaMotif className="floaty-alt absolute right-[22%] top-[8%] hidden h-16 w-16 text-onam-gold/15 md:block" />
-      <PookalamMotif className="floaty absolute left-[24%] bottom-[8%] hidden h-16 w-16 text-onam-cream/15 md:block" />
+      <OnamMotifField
+        types={["chenda", "lamp", "pookalam", "leaf", "pulikali", "boat"]}
+        count={6}
+        imageSrcs={motifImages}
+      />
 
       <div className="relative z-10 flex flex-col items-center gap-6 text-center">
         <p

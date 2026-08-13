@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import type { Program } from "@/config/onam";
+import type { Program, onamConfig } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import Petals from "@/components/effects/Petals";
 import Particles from "@/components/effects/Particles";
 import Confetti from "@/components/effects/Confetti";
+import OnamMotifField from "@/components/effects/OnamMotifField";
 
 type ProgramsRevealProps = {
   programs: Program[];
   stepMs: number;
   outroMs: number;
+  motifImages: (typeof onamConfig)["media"]["motifImages"];
   paused: boolean;
   onComplete: () => void;
   onIndexChange?: (index: number) => void;
@@ -22,6 +24,7 @@ export default function ProgramsReveal({
   programs,
   stepMs,
   outroMs,
+  motifImages,
   paused,
   onComplete,
   onIndexChange,
@@ -56,6 +59,7 @@ export default function ProgramsReveal({
       <Particles density={20} paused={paused} />
       <Petals density={14} paused={paused} />
       <Confetti density={16} burstTrigger={index} paused={paused} />
+      <OnamMotifField types={["thiruvathira", "leaf", "boat", "sadya"]} count={4} imageSrcs={motifImages} />
 
       <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">
         Programs &amp; Events

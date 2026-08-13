@@ -36,6 +36,20 @@ export const onamConfig = {
     // Swap back to a local "/media/previous-onam.mp4" path any time by dropping the file in public/media/.
     previousYearVideo: "https://lakshyamailerimages.s3.ap-south-1.amazonaws.com/Lakshyaarav+Promo+(1).mp4",
     poster: "/media/onam-poster.png",
+    // Optional real photos for the background motifs (chenda, pulikali, etc).
+    // Drop a PNG/JPG at any of these paths and that motif switches from the
+    // drawn icon to your photo automatically — nothing else to change.
+    // Any path left unmet just keeps using the illustrated icon.
+    motifImages: {
+      chenda: "/media/motifs/chenda.png",
+      pulikali: "/media/motifs/pulikali.png",
+      lamp: "/media/motifs/lamp.png",
+      pookalam: "/media/motifs/pookalam.png",
+      leaf: "/media/motifs/leaf.png",
+      boat: "/media/motifs/boat.png",
+      thiruvathira: "/media/motifs/thiruvathira.png",
+      sadya: "/media/motifs/sadya.png",
+    },
   },
 
   /** Set to false to keep the presentation on the final date screen instead of looping. */

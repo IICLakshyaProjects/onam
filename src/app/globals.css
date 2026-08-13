@@ -152,6 +152,23 @@ body {
   }
 }
 
+/* Ambient pookalam-style floor glow (see RangoliGlow). */
+.rangoli-pulse {
+  animation: rangoli-pulse 6s ease-in-out infinite;
+}
+
+@keyframes rangoli-pulse {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.9;
+  }
+}
+
 .text-shimmer {
   background: linear-gradient(100deg, var(--onam-gold) 20%, var(--onam-cream) 40%, var(--onam-amber) 60%, var(--onam-gold) 80%);
   background-size: 220% auto;
@@ -414,6 +431,7 @@ body {
   .title-heading-in,
   .floaty,
   .floaty-alt,
+  .rangoli-pulse,
   .light-rays,
   .text-shimmer,
   .scene-enter {

@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { onamConfig } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import { useFirstInteraction } from "@/lib/useFirstInteraction";
 import Petals from "@/components/effects/Petals";
 import Confetti from "@/components/effects/Confetti";
+import OnamMotifField from "@/components/effects/OnamMotifField";
 
 type PreviousYearVideoProps = {
   src: string;
   fallbackDurationMs: number;
+  motifImages: (typeof onamConfig)["media"]["motifImages"];
   paused: boolean;
   onComplete: () => void;
 };
@@ -24,6 +27,7 @@ type PreviousYearVideoProps = {
 export default function PreviousYearVideo({
   src,
   fallbackDurationMs,
+  motifImages,
   paused,
   onComplete,
 }: PreviousYearVideoProps) {
@@ -95,6 +99,7 @@ export default function PreviousYearVideo({
       <div className="cinematic-overlay" />
       <Petals density={14} paused={paused} />
       <Confetti density={10} paused={paused} />
+      <OnamMotifField types={["lamp", "leaf"]} count={2} imageSrcs={motifImages} />
       {needsSoundGesture && (
         <p className="absolute top-8 right-8 z-10 text-xs uppercase tracking-[0.3em] text-onam-gold/50">
           Press any key for sound
