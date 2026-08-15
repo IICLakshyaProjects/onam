@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
+import { useFirstAvailableSrc } from "@/lib/useImageAvailability";
 import { MOTIF_ICONS, type MotifType } from "@/components/effects/OnamMotifs";
 
 type Slot = { position: string; float: "floaty" | "floaty-alt"; responsive?: string };
@@ -18,15 +18,27 @@ const SLOTS: Slot[] = [
   { position: "right-[3%] top-[48%]", float: "floaty-alt", responsive: "hidden lg:block" },
 ];
 
-const TINTS = ["text-onam-gold/25", "text-onam-amber/25", "text-onam-crimson/25", "text-onam-green/30", "text-onam-cream/15"];
+const SIZE_CLASSES = {
+  default: "h-20 w-20 sm:h-28 sm:w-28",
+  large: "h-28 w-28 sm:h-36 sm:w-36 lg:h-40 lg:w-40",
+} as const;
+
+const TINT_SETS = {
+  default: ["text-onam-gold/25", "text-onam-amber/25", "text-onam-crimson/25", "text-onam-green/30", "text-onam-cream/15"],
+  vivid: ["text-onam-gold/40", "text-onam-amber/38", "text-onam-crimson/35", "text-onam-green/42", "text-onam-cream/28"],
+} as const;
 
 type OnamMotifFieldProps = {
   /** Which motifs to scatter (cycled if there are more slots than types). */
   types: MotifType[];
   /** How many slots to fill — defaults to `types.length`, capped at 8. */
   count?: number;
-  /** Optional real photos, keyed by motif type — used instead of the vector icon when they load. */
-  imageSrcs?: Partial<Record<MotifType, string>>;
+  /** Larger motifs for hero scenes like the title hook. */
+  size?: keyof typeof SIZE_CLASSES;
+  /** Brighter tints so motifs read over a busy backdrop. */
+  vivid?: boolean;
+  /** Optional real photo candidates (e.g. [".webp", ".png"] for the same name), keyed by motif type. The first candidate that exists is used instead of the vector icon. */
+  imageSrcs?: Partial<Record<MotifType, string[]>>;
 };
 
 /**
@@ -37,22 +49,24 @@ type OnamMotifFieldProps = {
  * instead — so dropping real images into `/public/media/motifs/` upgrades
  * the whole app without touching any scene component.
  */
-export default function OnamMotifField({ types, count, imageSrcs }: OnamMotifFieldProps) {
+export default function OnamMotifField({ types, count, size = "default", vivid = false, imageSrcs }: OnamMotifFieldProps) {
   if (types.length === 0) return null;
   const n = Math.min(count ?? types.length, SLOTS.length);
+  const tints = TINT_SETS[vivid ? "vivid" : "default"];
+  const sizeClass = SIZE_CLASSES[size];
 
   return (
     <>
       {Array.from({ length: n }, (_, i) => {
         const type = types[i % types.length];
         const slot = SLOTS[i];
-        const tint = TINTS[i % TINTS.length];
+        const tint = tints[i % tints.length];
         return (
           <MotifSlotItem
             key={i}
             type={type}
-            src={imageSrcs?.[type]}
-            className={`${slot.float} absolute ${slot.position} ${slot.responsive ?? ""} h-20 w-20 sm:h-28 sm:w-28 ${tint}`}
+            srcs={imageSrcs?.[type]}
+            className={`${slot.float} absolute ${slot.position} ${slot.responsive ?? ""} ${sizeClass} ${tint}`}
           />
         );
       })}
@@ -60,17 +74,20 @@ export default function OnamMotifField({ types, count, imageSrcs }: OnamMotifFie
   );
 }
 
-function MotifSlotItem({ type, src, className }: { type: MotifType; src?: string; className: string }) {
-  const [failed, setFailed] = useState(false);
+function MotifSlotItem({ type, srcs, className }: { type: MotifType; srcs?: string[]; className: string }) {
+  // Each candidate is checked once per unique path for the whole page
+  // session — a motif photo that isn't there yet never gets re-requested on
+  // every scene switch or loop iteration (see useFirstAvailableSrc).
+  const resolvedSrc = useFirstAvailableSrc(srcs);
   const Icon = MOTIF_ICONS[type];
 
-  if (!src || failed) {
+  if (!resolvedSrc) {
     return <Icon aria-hidden className={className} />;
   }
 
   return (
     <div aria-hidden className={`${className} relative`}>
-      <Image src={src} alt="" fill sizes="140px" style={{ objectFit: "contain" }} onError={() => setFailed(true)} />
+      <Image src={resolvedSrc} alt="" fill sizes="140px" style={{ objectFit: "contain" }} />
     </div>
   );
 }

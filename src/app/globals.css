@@ -169,6 +169,34 @@ body {
   }
 }
 
+/* One-shot diagonal spotlight sweep (see SpotlightSweep) — used for team-reveal drama. */
+.spotlight-sweep {
+  background: linear-gradient(
+    100deg,
+    transparent 42%,
+    rgba(255, 247, 214, 0.28) 48%,
+    rgba(255, 247, 214, 0.5) 50%,
+    rgba(255, 247, 214, 0.28) 52%,
+    transparent 58%
+  );
+  mix-blend-mode: screen;
+  animation: spotlight-sweep 1100ms ease-out both;
+}
+
+@keyframes spotlight-sweep {
+  0% {
+    transform: translateX(-70%);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(70%);
+    opacity: 0;
+  }
+}
+
 .text-shimmer {
   background: linear-gradient(100deg, var(--onam-gold) 20%, var(--onam-cream) 40%, var(--onam-amber) 60%, var(--onam-gold) 80%);
   background-size: 220% auto;
@@ -369,6 +397,145 @@ body {
   }
 }
 
+/* Title hook — rich Onam festival backdrop (see TitleBackdrop) */
+.title-mandala-outer {
+  animation: title-mandala-spin 90s linear infinite;
+}
+
+.title-mandala-inner {
+  animation: title-mandala-spin-reverse 65s linear infinite;
+}
+
+@keyframes title-mandala-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes title-mandala-spin-reverse {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+.title-corner-ornament {
+  animation: title-corner-glow 4s ease-in-out infinite;
+}
+
+@keyframes title-corner-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 6px rgba(232, 181, 69, 0.2));
+  }
+  50% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 18px rgba(232, 181, 69, 0.55));
+  }
+}
+
+.title-garland {
+  animation: title-garland-sway 6s ease-in-out infinite;
+}
+
+@keyframes title-garland-sway {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+.title-boat-waves {
+  animation: title-waves-drift 8s ease-in-out infinite;
+}
+
+@keyframes title-waves-drift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-12px);
+  }
+}
+
+.title-vine-border {
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 14px,
+    rgba(232, 181, 69, 0.18) 14px,
+    rgba(232, 181, 69, 0.18) 16px,
+    transparent 16px,
+    transparent 28px,
+    rgba(14, 74, 52, 0.22) 28px,
+    rgba(14, 74, 52, 0.22) 30px
+  );
+  border-left: 1px solid rgba(232, 181, 69, 0.15);
+  border-right: 1px solid rgba(232, 181, 69, 0.15);
+  opacity: 0.55;
+}
+
+.title-sparkle {
+  animation: title-sparkle-twinkle 2.6s ease-in-out infinite;
+  box-shadow: 0 0 6px rgba(232, 181, 69, 0.8);
+}
+
+@keyframes title-sparkle-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+}
+
+.title-cracker-flash {
+  position: absolute;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 230, 140, 0.9) 0%, rgba(232, 181, 69, 0.4) 35%, transparent 70%);
+  animation: title-cracker-pop 3.2s ease-out infinite;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.title-cracker-flash-fast {
+  animation-duration: 1.6s;
+}
+
+@keyframes title-cracker-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1.6);
+  }
+  28% {
+    opacity: 0.4;
+    transform: scale(2.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+
 /* ---------------------------------------------------------------------- */
 /* Date reveal                                                             */
 /* ---------------------------------------------------------------------- */
@@ -429,9 +596,17 @@ body {
   .title-presents-in,
   .title-presents-settle,
   .title-heading-in,
+  .title-mandala-outer,
+  .title-mandala-inner,
+  .title-corner-ornament,
+  .title-garland,
+  .title-boat-waves,
+  .title-sparkle,
+  .title-cracker-flash,
   .floaty,
   .floaty-alt,
   .rangoli-pulse,
+  .spotlight-sweep,
   .light-rays,
   .text-shimmer,
   .scene-enter {

@@ -5,8 +5,11 @@ import type { onamConfig } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import { useFirstInteraction } from "@/lib/useFirstInteraction";
 import Petals from "@/components/effects/Petals";
+import Particles from "@/components/effects/Particles";
 import Confetti from "@/components/effects/Confetti";
+import Fireworks from "@/components/effects/Fireworks";
 import OnamMotifField from "@/components/effects/OnamMotifField";
+import RangoliGlow from "@/components/effects/RangoliGlow";
 
 type PreviousYearVideoProps = {
   src: string;
@@ -96,10 +99,19 @@ export default function PreviousYearVideo({
       ) : (
         <PlaceholderScreen />
       )}
+      <div className="light-rays opacity-60" />
+      <div className="glow-orb h-[32rem] w-[32rem] opacity-70" />
       <div className="cinematic-overlay" />
-      <Petals density={14} paused={paused} />
-      <Confetti density={10} paused={paused} />
-      <OnamMotifField types={["lamp", "leaf"]} count={2} imageSrcs={motifImages} />
+      <RangoliGlow />
+      <Particles density={22} paused={paused} />
+      <Petals density={18} paused={paused} />
+      <Confetti density={12} paused={paused} />
+      <Fireworks auto autoIntervalMs={3200} paused={paused} />
+      <OnamMotifField
+        types={["lamp", "leaf", "boat", "pookalam", "chenda"]}
+        count={5}
+        imageSrcs={motifImages}
+      />
       {needsSoundGesture && (
         <p className="absolute top-8 right-8 z-10 text-xs uppercase tracking-[0.3em] text-onam-gold/50">
           Press any key for sound

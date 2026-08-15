@@ -17,6 +17,13 @@ export type Team = {
   tagline?: string;
 };
 
+/** Builds `{ name: ["/media/motifs/name.webp", "/media/motifs/name.png"] }` for each motif so either file format works. */
+function motifCandidates(names: string[]): Record<string, string[]> {
+  return Object.fromEntries(
+    names.map((name) => [name, [`/media/motifs/${name}.webp`, `/media/motifs/${name}.png`]])
+  );
+}
+
 export const onamConfig = {
   event: {
     heading: "ONAM CELEBRATION",
@@ -37,19 +44,20 @@ export const onamConfig = {
     previousYearVideo: "https://lakshyamailerimages.s3.ap-south-1.amazonaws.com/Lakshyaarav+Promo+(1).mp4",
     poster: "/media/onam-poster.png",
     // Optional real photos for the background motifs (chenda, pulikali, etc).
-    // Drop a PNG/JPG at any of these paths and that motif switches from the
-    // drawn icon to your photo automatically — nothing else to change.
-    // Any path left unmet just keeps using the illustrated icon.
-    motifImages: {
-      chenda: "/media/motifs/chenda.png",
-      pulikali: "/media/motifs/pulikali.png",
-      lamp: "/media/motifs/lamp.png",
-      pookalam: "/media/motifs/pookalam.png",
-      leaf: "/media/motifs/leaf.png",
-      boat: "/media/motifs/boat.png",
-      thiruvathira: "/media/motifs/thiruvathira.png",
-      sadya: "/media/motifs/sadya.png",
-    },
+    // Drop a file at either extension for a given name — .webp or .png,
+    // whichever you have — and that motif switches from the drawn icon to
+    // your photo automatically, no other change needed. Both are just
+    // candidates; leaving both unmet keeps using the illustrated icon.
+    motifImages: motifCandidates([
+      "chenda",
+      "pulikali",
+      "lamp",
+      "pookalam",
+      "leaf",
+      "boat",
+      "thiruvathira",
+      "sadya",
+    ]),
   },
 
   /** Set to false to keep the presentation on the final date screen instead of looping. */

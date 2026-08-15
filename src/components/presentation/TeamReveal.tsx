@@ -4,11 +4,33 @@ import { useState } from "react";
 import Image from "next/image";
 import type { Team, onamConfig } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
+import { useImageAvailability } from "@/lib/useImageAvailability";
 import Fireworks from "@/components/effects/Fireworks";
+import ChendaBeat from "@/components/effects/ChendaBeat";
 import Particles from "@/components/effects/Particles";
 import Petals from "@/components/effects/Petals";
 import Confetti from "@/components/effects/Confetti";
 import OnamMotifField from "@/components/effects/OnamMotifField";
+import RangoliGlow from "@/components/effects/RangoliGlow";
+import SpotlightSweep from "@/components/effects/SpotlightSweep";
+import type { MotifType } from "@/components/effects/OnamMotifs";
+
+/** All available motifs, rotated per team so each reveal gets a fresh-feeling spread instead of the same four every time. */
+const ALL_MOTIFS: MotifType[] = [
+  "chenda",
+  "pulikali",
+  "lamp",
+  "pookalam",
+  "leaf",
+  "boat",
+  "thiruvathira",
+  "sadya",
+];
+
+function motifsForTeam(index: number): MotifType[] {
+  const offset = (index * 2) % ALL_MOTIFS.length;
+  return ALL_MOTIFS.map((_, i) => ALL_MOTIFS[(i + offset) % ALL_MOTIFS.length]);
+}
 
 type TeamRevealProps = {
   teams: Team[];
@@ -55,11 +77,14 @@ export default function TeamReveal({
   return (
     <div className="onam-stage scene-enter flex flex-col items-center justify-center">
       <div className="light-rays" />
+      <RangoliGlow />
       <Particles density={26} paused={paused} />
       <Petals density={14} paused={paused} />
-      <Confetti density={16} burstTrigger={`${team.name}-${index}`} paused={paused} />
+      <Confetti density={20} burstTrigger={`${team.name}-${index}`} paused={paused} />
       <Fireworks burstTrigger={`${team.name}-${index}`} paused={paused} />
-      <OnamMotifField types={["chenda", "pulikali", "boat", "lamp"]} count={4} imageSrcs={motifImages} />
+      <ChendaBeat beatTrigger={`${team.name}-${index}`} paused={paused} />
+      <SpotlightSweep triggerKey={`${team.name}-${index}`} />
+      <OnamMotifField types={motifsForTeam(index)} count={6} imageSrcs={motifImages} />
 
       <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">
         Meet The Teams
@@ -91,9 +116,12 @@ export default function TeamReveal({
 }
 
 function TeamPortrait({ team }: { team: Team }) {
-  const [failed, setFailed] = useState(false);
+  // Checked once per unique path for the whole page session (see
+  // useImageAvailability) — a team photo that isn't uploaded yet never gets
+  // re-requested on every loop of the presentation.
+  const available = useImageAvailability(team.image);
 
-  if (failed) {
+  if (!available) {
     return (
       <div className="relative z-10 flex h-64 w-64 items-center justify-center rounded-full border-4 border-onam-gold/60 bg-black/40 text-5xl font-black text-onam-gold sm:h-72 sm:w-72">
         {initials(team.name)}
@@ -103,14 +131,7 @@ function TeamPortrait({ team }: { team: Team }) {
 
   return (
     <div className="relative z-10 h-64 w-64 overflow-hidden rounded-full border-4 border-onam-gold/60 shadow-[0_0_60px_rgba(232,181,69,0.4)] sm:h-72 sm:w-72">
-      <Image
-        src={team.image}
-        alt={team.name}
-        fill
-        sizes="18rem"
-        style={{ objectFit: "cover" }}
-        onError={() => setFailed(true)}
-      />
+      <Image src={team.image} alt={team.name} fill sizes="18rem" style={{ objectFit: "cover" }} />
     </div>
   );
 }

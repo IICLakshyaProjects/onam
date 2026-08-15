@@ -6,7 +6,11 @@ import { usePausableSequence } from "@/lib/usePausableSequence";
 import Petals from "@/components/effects/Petals";
 import Particles from "@/components/effects/Particles";
 import Confetti from "@/components/effects/Confetti";
+import Fireworks from "@/components/effects/Fireworks";
+import ChendaBeat from "@/components/effects/ChendaBeat";
 import OnamMotifField from "@/components/effects/OnamMotifField";
+import RangoliGlow from "@/components/effects/RangoliGlow";
+import SpotlightSweep from "@/components/effects/SpotlightSweep";
 
 type ProgramsRevealProps = {
   programs: Program[];
@@ -56,10 +60,15 @@ export default function ProgramsReveal({
   return (
     <div className="onam-stage scene-enter flex flex-col items-center justify-center">
       <div className="light-rays" />
-      <Particles density={20} paused={paused} />
-      <Petals density={14} paused={paused} />
-      <Confetti density={16} burstTrigger={index} paused={paused} />
-      <OnamMotifField types={["thiruvathira", "leaf", "boat", "sadya"]} count={4} imageSrcs={motifImages} />
+      <div className="glow-orb h-[36rem] w-[36rem]" />
+      <RangoliGlow />
+      <SpotlightSweep triggerKey={index} />
+      <Particles density={24} paused={paused} />
+      <Petals density={16} paused={paused} />
+      <Confetti density={18} burstTrigger={index} paused={paused} />
+      <Fireworks burstTrigger={index} paused={paused} />
+      <ChendaBeat beatTrigger={index} paused={paused} />
+      <OnamMotifField types={["thiruvathira", "leaf", "boat", "sadya", "pookalam", "chenda"]} count={6} imageSrcs={motifImages} />
 
       <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">
         Programs &amp; Events

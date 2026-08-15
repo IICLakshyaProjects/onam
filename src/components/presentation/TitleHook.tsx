@@ -6,8 +6,12 @@ import { usePausableSequence } from "@/lib/usePausableSequence";
 import Petals from "@/components/effects/Petals";
 import Confetti from "@/components/effects/Confetti";
 import Particles from "@/components/effects/Particles";
+import Fireworks from "@/components/effects/Fireworks";
+import ChendaBeat from "@/components/effects/ChendaBeat";
 import OnamMotifField from "@/components/effects/OnamMotifField";
 import RangoliGlow from "@/components/effects/RangoliGlow";
+import SpotlightSweep from "@/components/effects/SpotlightSweep";
+import TitleBackdrop from "@/components/effects/TitleBackdrop";
 
 type TitleHookProps = {
   titleHook: (typeof onamConfig)["titleHook"];
@@ -18,12 +22,13 @@ type TitleHookProps = {
   onComplete: () => void;
 };
 
+const ALL_MOTIFS = ["chenda", "pulikali", "lamp", "pookalam", "leaf", "boat", "thiruvathira", "sadya"] as const;
+
 /**
  * Opening hook shown before the previous-year video: a presenter credit
  * ("IIC Lakshya Presents") that settles into a small caption, then the main
- * title bursts in — over a softly animated backdrop of traditional Onam
- * motifs (chenda, pulikali, lamp, pookalam, leaf, boat) drifting behind the
- * text, plus a pulsing rangoli-style floor glow.
+ * title bursts in — over a richly layered Onam festival backdrop with
+ * pookalam mandala, garlands, continuous crackers, and drifting motifs.
  */
 export default function TitleHook({ titleHook, motifImages, presentedByMs, headingMs, paused, onComplete }: TitleHookProps) {
   const [phase, setPhase] = useState<0 | 1>(0);
@@ -40,17 +45,40 @@ export default function TitleHook({ titleHook, motifImages, presentedByMs, headi
 
   return (
     <div className="onam-stage scene-enter flex flex-col items-center justify-center overflow-hidden">
-      <div className="light-rays" />
-      <div className="glow-orb h-[38rem] w-[38rem]" />
-      <RangoliGlow />
-      <Particles density={30} paused={paused} />
-      <Petals density={16} paused={paused} />
-      <Confetti density={14} burstTrigger={revealed ? "revealed" : undefined} paused={paused} />
+      {/* Layered Onam festival backdrop — mandala, garlands, lamps, waves */}
+      <TitleBackdrop intense={revealed} />
 
-      {/* Drifting Onam motifs — kept to the edges so they never fight the text. */}
+      <div className="light-rays opacity-80" />
+      <div className="glow-orb h-[42rem] w-[42rem]" style={{ top: "18%" }} />
+      <div
+        className="glow-orb h-[28rem] w-[28rem] opacity-60"
+        style={{
+          top: "auto",
+          bottom: "8%",
+          background: "radial-gradient(circle, rgba(179,34,47,0.35) 0%, transparent 70%)",
+        }}
+      />
+      <RangoliGlow />
+      <SpotlightSweep triggerKey={phase} />
+
+      {/* Continuous ambient + burst effects */}
+      <Particles density={revealed ? 55 : 38} paused={paused} />
+      <Petals density={revealed ? 28 : 20} paused={paused} />
+      <Confetti density={revealed ? 32 : 22} burstTrigger={phase} paused={paused} />
+      <Fireworks
+        burstTrigger={phase}
+        auto
+        autoIntervalMs={revealed ? 750 : 1400}
+        paused={paused}
+      />
+      <ChendaBeat beatTrigger={phase} paused={paused} />
+
+      {/* All eight motifs — large and vivid so they read over the backdrop */}
       <OnamMotifField
-        types={["chenda", "lamp", "pookalam", "leaf", "pulikali", "boat"]}
-        count={6}
+        types={[...ALL_MOTIFS]}
+        count={8}
+        size="large"
+        vivid
         imageSrcs={motifImages}
       />
 
