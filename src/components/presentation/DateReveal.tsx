@@ -4,18 +4,24 @@ import { useState } from "react";
 import type { onamConfig } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import Fireworks from "@/components/effects/Fireworks";
+import ChendaBeat from "@/components/effects/ChendaBeat";
 import Particles from "@/components/effects/Particles";
 import Petals from "@/components/effects/Petals";
+import Confetti from "@/components/effects/Confetti";
+import OnamMotifField from "@/components/effects/OnamMotifField";
+import RangoliGlow from "@/components/effects/RangoliGlow";
+import SpotlightSweep from "@/components/effects/SpotlightSweep";
 
 type DateRevealProps = {
   dateReveal: (typeof onamConfig)["dateReveal"];
   buildupMs: number;
   holdMs: number;
+  motifImages: (typeof onamConfig)["media"]["motifImages"];
   paused: boolean;
   onComplete: () => void;
 };
 
-export default function DateReveal({ dateReveal, buildupMs, holdMs, paused, onComplete }: DateRevealProps) {
+export default function DateReveal({ dateReveal, buildupMs, holdMs, motifImages, paused, onComplete }: DateRevealProps) {
   const [phase, setPhase] = useState<0 | 1>(0);
 
   usePausableSequence(
@@ -31,9 +37,23 @@ export default function DateReveal({ dateReveal, buildupMs, holdMs, paused, onCo
   return (
     <div className="onam-stage scene-enter flex flex-col items-center justify-center">
       <div className="light-rays" />
+      <RangoliGlow />
+      <SpotlightSweep triggerKey={revealed ? "revealed" : "buildup"} />
       <Particles density={revealed ? 55 : 24} paused={paused} />
       <Petals density={revealed ? 20 : 10} paused={paused} />
-      <Fireworks auto={revealed} autoIntervalMs={900} paused={paused} />
+      <Confetti density={revealed ? 26 : 12} burstTrigger={revealed ? "revealed" : undefined} paused={paused} />
+      <Fireworks
+        burstTrigger={revealed ? "revealed" : undefined}
+        auto={revealed}
+        autoIntervalMs={900}
+        paused={paused}
+      />
+      <ChendaBeat beatTrigger={revealed ? "revealed" : undefined} paused={paused} />
+      <OnamMotifField
+        types={["chenda", "pulikali", "lamp", "pookalam", "boat", "thiruvathira"]}
+        count={6}
+        imageSrcs={motifImages}
+      />
 
       {!revealed ? (
         <div className="date-buildup-pulse relative z-10 flex flex-col items-center gap-6 text-center">

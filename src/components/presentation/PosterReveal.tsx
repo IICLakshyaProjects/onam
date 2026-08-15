@@ -2,18 +2,26 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import type { onamConfig } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import Particles from "@/components/effects/Particles";
 import Petals from "@/components/effects/Petals";
+import Confetti from "@/components/effects/Confetti";
+import Fireworks from "@/components/effects/Fireworks";
+import ChendaBeat from "@/components/effects/ChendaBeat";
+import OnamMotifField from "@/components/effects/OnamMotifField";
+import RangoliGlow from "@/components/effects/RangoliGlow";
+import SpotlightSweep from "@/components/effects/SpotlightSweep";
 
 type PosterRevealProps = {
   src: string;
   durationMs: number;
+  motifImages: (typeof onamConfig)["media"]["motifImages"];
   paused: boolean;
   onComplete: () => void;
 };
 
-export default function PosterReveal({ src, durationMs, paused, onComplete }: PosterRevealProps) {
+export default function PosterReveal({ src, durationMs, motifImages, paused, onComplete }: PosterRevealProps) {
   const [failed, setFailed] = useState(false);
 
   usePausableSequence([durationMs], () => {}, onComplete, paused, "poster");
@@ -22,8 +30,14 @@ export default function PosterReveal({ src, durationMs, paused, onComplete }: Po
     <div className="onam-stage scene-enter flex items-center justify-center">
       <div className="light-rays" />
       <div className="glow-orb h-[40rem] w-[40rem]" />
+      <RangoliGlow />
+      <SpotlightSweep triggerKey="poster-reveal" />
       <Particles density={36} paused={paused} />
-      <Petals density={12} paused={paused} />
+      <Petals density={16} paused={paused} />
+      <Confetti density={20} burstTrigger="poster-reveal" paused={paused} />
+      <Fireworks burstTrigger="poster-reveal" paused={paused} />
+      <ChendaBeat beatTrigger="poster-reveal" paused={paused} />
+      <OnamMotifField types={["pookalam", "lamp", "sadya", "leaf", "chenda", "boat"]} count={6} imageSrcs={motifImages} />
 
       <div className="poster-reveal relative z-10 flex h-[82%] w-[86%] items-center justify-center sm:h-[78%] sm:w-[62%]">
         {!failed ? (

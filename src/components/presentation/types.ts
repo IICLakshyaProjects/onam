@@ -1,4 +1,5 @@
 export type Scene =
+  | "title"
   | "previous-video"
   | "countdown"
   | "poster"
@@ -9,6 +10,7 @@ export type Scene =
 
 /** Canonical order the presentation moves through. `finished` is a terminal state, not part of the loop. */
 export const SCENE_ORDER: Scene[] = [
+  "title",
   "previous-video",
   "countdown",
   "poster",

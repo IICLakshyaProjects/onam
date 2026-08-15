@@ -22,7 +22,7 @@ type PresentationControlsProps = {
  *   F            toggle fullscreen
  *   R            restart presentation
  *   ESC          exit fullscreen
- *   1-6          jump directly to a scene (dev/testing aid)
+ *   1-7          jump directly to a scene (dev/testing aid)
  */
 export default function PresentationControls({
   onTogglePause,
@@ -60,7 +60,7 @@ export default function PresentationControls({
           }
           break;
         default: {
-          const digitMatch = /^Digit([1-6])$/.exec(event.code);
+          const digitMatch = /^Digit([1-9])$/.exec(event.code);
           if (digitMatch) {
             const index = Number(digitMatch[1]) - 1;
             if (index < SCENE_ORDER.length) onJumpToScene(index);
