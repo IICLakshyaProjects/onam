@@ -31,21 +31,24 @@ export const onamConfig = {
     year: new Date().getFullYear().toString(),
   },
 
-  /** Opening hook shown before the previous-year video — presenter credit, then the title. */
+  /** Opening hook shown before the previous-year video - presenter credit, then the title. */
   titleHook: {
     presentedBy: "IIC Lakshya Presents",
-    heading: "ONAM",
-    subheading: "A Golden Harvest of Togetherness",
+    heading: "ONAM 2K26",
+    introCopy: "Before we celebrate this year, let\u2019s revisit the moments that made last Onam unforgettable\u2026",
+    lookbackTitle: "A Look Back at Onam 2025",
   },
 
   media: {
     // Hosted remotely (the local /public/media/previous-onam.mp4 copy was removed).
     // Swap back to a local "/media/previous-onam.mp4" path any time by dropping the file in public/media/.
     previousYearVideo: "https://lakshyamailerimages.s3.ap-south-1.amazonaws.com/Lakshyaarav+Promo+(1).mp4",
+    revileVideo: "/media/My%20First%20Project.mp4",
+    programsBgm: "/media/Thiruvaavaniraavu%20(Instrumental%20Version).mp3",
     poster: "/media/onam-poster.png",
     // Optional real photos for the background motifs (chenda, pulikali, etc).
-    // Drop a file at either extension for a given name — .webp or .png,
-    // whichever you have — and that motif switches from the drawn icon to
+    // Drop a file at either extension for a given name - .webp or .png,
+    // whichever you have - and that motif switches from the drawn icon to
     // your photo automatically, no other change needed. Both are just
     // candidates; leaving both unmet keeps using the illustrated icon.
     motifImages: motifCandidates([
@@ -61,13 +64,20 @@ export const onamConfig = {
   },
 
   /** Set to false to keep the presentation on the final date screen instead of looping. */
-  loop: true,
+  loop: false,
+
+  /** Index where the post-cultural event section begins. */
+  programSectionBreakIndex: 9,
 
   durations: {
     /** How long the "presented by" credit is held alone before the main title bursts in (ms). */
     titlePresentedByMs: 2600,
-    /** How long the main title hook is held on screen before moving on to the video (ms). */
+    /** How long the main title hook is held on screen before moving on to the intro line (ms). */
     titleHeadingMs: 4200,
+    /** How long the intro line is held before fading into the look-back title (ms). */
+    titleIntroMs: 3600,
+    /** How long the look-back title is held before moving on to the video (ms). */
+    titleLookbackMs: 2400,
     /** Fallback duration (ms) for the previous-year video scene if the video is missing / fails to load. */
     previousVideoFallback: 8000,
     /** Starting number for the countdown; it always counts all the way down through 0 (one visual beat per second). */
@@ -78,6 +88,10 @@ export const onamConfig = {
     posterDuration: 8000,
     /** How long each program item takes to reveal + hold before the next one (ms). */
     programStepMs: 2600,
+    /** How long the cultural programs intro screen holds before the list begins (ms). */
+    programIntroMs: 2600,
+    /** How long the post-cultural bridge screen holds before the event section begins (ms). */
+    programBridgeMs: 3000,
     /** Extra hold time (ms) once every program has been revealed. */
     programsOutroMs: 2200,
     /** How long each team reveal + firework burst holds before the next team (ms). */
@@ -94,27 +108,72 @@ export const onamConfig = {
 
   programs: [
     {
-      title: "Cultural",
-      description: "Classical dance, music and traditional performances celebrating Kerala's heritage.",
-      icon: "cultural",
+      title: "Group Dance",
+      description: "High-energy team dance performances celebrating rhythm, movement, and festival spirit.",
+      icon: "groupDance",
     },
     {
-      title: "Indoor / Outdoor",
-      description: "Friendly team competitions and games for everyone to enjoy together.",
-      icon: "games",
+      title: "Solo Dance",
+      description: "Individual dance performances with stage presence, expression, and style.",
+      icon: "soloDance",
     },
     {
-      title: "Activities",
-      description: "Onam Sadya, Pookalam making and other festive activities through the day.",
-      icon: "activities",
+      title: "Group Song",
+      description: "Choral and ensemble singing that brings everyone together on one stage.",
+      icon: "groupSong",
+    },
+    {
+      title: "Solo Song",
+      description: "A single voice taking the spotlight with melody, confidence, and emotion.",
+      icon: "soloSong",
+    },
+    {
+      title: "Sreeman & Malayala Manka",
+      description: "The marquee cultural showcase celebrating tradition, grace, and stage presence.",
+      icon: "sreemanMalayalaManka",
+    },
+    {
+      title: "Sreeman - Individual / Solo Performance",
+      description: "An individual showcase for Sreeman with performance, poise, and personality.",
+      icon: "sreemanSolo",
+    },
+    {
+      title: "Malayala Manka - Individual / Solo Performance",
+      description: "An individual showcase for Malayala Manka with elegance and expression.",
+      icon: "malayalaMankaSolo",
+    },
+    {
+      title: "Instrumental Performance",
+      description: "A musical performance driven by instruments, rhythm, and live energy.",
+      icon: "instrumental",
+    },
+    {
+      title: "Chenda Melam",
+      description: "A powerful traditional percussion performance that brings energy to the stage.",
+      icon: "chendaMelam",
+    },
+    {
+      title: "Onam Sadhya",
+      description: "A festive dining experience with the traditional Onam spread.",
+      icon: "sadya",
+    },
+    {
+      title: "Photoshoot Session",
+      description: "A fun, stylish session to capture the celebration in memorable frames.",
+      icon: "photoshoot",
+    },
+    {
+      title: "Outdoor Games",
+      description: "Exciting and energetic outdoor games that bring everyone into the action.",
+      icon: "outdoorGames",
     },
   ] satisfies Program[],
 
   teams: [
-    { name: "Team 1", image: "/media/team-1.png" },
-    { name: "Team 2", image: "/media/team-2.png" },
-    { name: "Team 3", image: "/media/team-3.png" },
-    { name: "Team 4", image: "/media/team-4.png" },
+    { name: "Pathalam Passengers", image: "/media/team-1.png" },
+    { name: "Thrikkakara Appans", image: "/media/team-2.png" },
+    { name: "ON അല്ലെ🔥🔥🔥", image: "/media/team-3.png" },
+    { name: "Mahabali Mafia", image: "/media/team-4.png" },
   ] satisfies Team[],
 
   dateReveal: {

@@ -1,6 +1,7 @@
 export type Scene =
   | "title"
   | "previous-video"
+  | "revile-video"
   | "countdown"
   | "poster"
   | "programs"
@@ -12,8 +13,7 @@ export type Scene =
 export const SCENE_ORDER: Scene[] = [
   "title",
   "previous-video",
-  "countdown",
-  "poster",
+  "revile-video",
   "programs",
   "teams",
   "date",

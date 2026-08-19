@@ -55,6 +55,8 @@ export default function SceneRenderer({
           motifImages={media.motifImages}
           presentedByMs={durations.titlePresentedByMs}
           headingMs={durations.titleHeadingMs}
+          introMs={durations.titleIntroMs}
+          lookbackMs={durations.titleLookbackMs}
           paused={paused}
           onComplete={onSceneComplete}
         />
@@ -67,6 +69,20 @@ export default function SceneRenderer({
           src={media.previousYearVideo}
           fallbackDurationMs={durations.previousVideoFallback}
           motifImages={media.motifImages}
+          videoMode="original"
+          paused={paused}
+          onComplete={onSceneComplete}
+        />
+      );
+
+    case "revile-video":
+      return (
+        <PreviousYearVideo
+          key={key}
+          src={media.revileVideo}
+          fallbackDurationMs={durations.previousVideoFallback}
+          motifImages={media.motifImages}
+          videoMode="enlarged"
           paused={paused}
           onComplete={onSceneComplete}
         />
@@ -102,6 +118,10 @@ export default function SceneRenderer({
         <ProgramsReveal
           key={key}
           programs={programs}
+          sectionBreakIndex={onamConfig.programSectionBreakIndex}
+          bgmSrc={media.programsBgm}
+          introMs={durations.programIntroMs}
+          bridgeMs={durations.programBridgeMs}
           stepMs={durations.programStepMs}
           outroMs={durations.programsOutroMs}
           motifImages={media.motifImages}

@@ -15,6 +15,7 @@ type PreviousYearVideoProps = {
   src: string;
   fallbackDurationMs: number;
   motifImages: (typeof onamConfig)["media"]["motifImages"];
+  videoMode?: "original" | "enlarged";
   paused: boolean;
   onComplete: () => void;
 };
@@ -31,6 +32,7 @@ export default function PreviousYearVideo({
   src,
   fallbackDurationMs,
   motifImages,
+  videoMode = "original",
   paused,
   onComplete,
 }: PreviousYearVideoProps) {
@@ -86,16 +88,22 @@ export default function PreviousYearVideo({
   );
 
   return (
-    <div className="onam-stage scene-enter">
+    <div className="onam-stage scene-enter bg-black overflow-hidden">
       {!failed ? (
-        <video
-          ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
-          src={src}
-          playsInline
-          onEnded={onComplete}
-          onError={() => setFailed(true)}
-        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black">
+          <video
+            ref={videoRef}
+            className={
+              videoMode === "enlarged"
+                ? "block h-[92vh] w-[92vw] max-h-none max-w-none bg-black object-contain"
+                : "block h-full w-full max-h-none max-w-none bg-black object-contain"
+            }
+            src={src}
+            playsInline
+            onEnded={onComplete}
+            onError={() => setFailed(true)}
+          />
+        </div>
       ) : (
         <PlaceholderScreen />
       )}
@@ -118,7 +126,7 @@ export default function PreviousYearVideo({
         </p>
       )}
       <div className="absolute bottom-10 left-0 right-0 flex flex-col items-center gap-2 text-center">
-        <p className="text-sm uppercase tracking-[0.5em] text-onam-gold/80">Last Year&apos;s Memories</p>
+        {/* <p className="text-sm uppercase tracking-[0.5em] text-onam-gold/80">Last Year&apos;s Memories</p> */}
       </div>
     </div>
   );

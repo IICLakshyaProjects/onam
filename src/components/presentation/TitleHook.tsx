@@ -18,6 +18,8 @@ type TitleHookProps = {
   motifImages: (typeof onamConfig)["media"]["motifImages"];
   presentedByMs: number;
   headingMs: number;
+  introMs: number;
+  lookbackMs: number;
   paused: boolean;
   onComplete: () => void;
 };
@@ -25,27 +27,35 @@ type TitleHookProps = {
 const ALL_MOTIFS = ["chenda", "pulikali", "lamp", "pookalam", "leaf", "boat", "thiruvathira", "sadya"] as const;
 
 /**
- * Opening hook shown before the previous-year video: a presenter credit
- * ("IIC Lakshya Presents") that settles into a small caption, then the main
- * title bursts in — over a richly layered Onam festival backdrop with
- * pookalam mandala, garlands, continuous crackers, and drifting motifs.
+ * Opening hook shown before the previous-year video: a presenter credit,
+ * the main title, an intro line, and then a final look-back title before
+ * transitioning into the video scene.
  */
-export default function TitleHook({ titleHook, motifImages, presentedByMs, headingMs, paused, onComplete }: TitleHookProps) {
-  const [phase, setPhase] = useState<0 | 1>(0);
+export default function TitleHook({
+  titleHook,
+  motifImages,
+  presentedByMs,
+  headingMs,
+  introMs,
+  lookbackMs,
+  paused,
+  onComplete,
+}: TitleHookProps) {
+  const [phase, setPhase] = useState<0 | 1 | 2 | 3>(0);
 
   usePausableSequence(
-    [presentedByMs, headingMs],
-    (index) => setPhase(index as 0 | 1),
+    [presentedByMs, headingMs, introMs, lookbackMs],
+    (index) => setPhase(index as 0 | 1 | 2 | 3),
     onComplete,
     paused,
     "title-hook"
   );
 
-  const revealed = phase === 1;
+  const revealed = phase >= 1;
 
   return (
     <div className="onam-stage scene-enter flex flex-col items-center justify-center overflow-hidden">
-      {/* Layered Onam festival backdrop — mandala, garlands, lamps, waves */}
+      {/* Layered Onam festival backdrop - mandala, garlands, lamps, waves */}
       <TitleBackdrop intense={revealed} />
 
       <div className="light-rays opacity-80" />
@@ -73,7 +83,7 @@ export default function TitleHook({ titleHook, motifImages, presentedByMs, headi
       />
       <ChendaBeat beatTrigger={phase} paused={paused} />
 
-      {/* All eight motifs — large and vivid so they read over the backdrop */}
+      {/* All eight motifs - large and vivid so they read over the backdrop */}
       <OnamMotifField
         types={[...ALL_MOTIFS]}
         count={8}
@@ -83,26 +93,32 @@ export default function TitleHook({ titleHook, motifImages, presentedByMs, headi
       />
 
       <div className="relative z-10 flex flex-col items-center gap-6 text-center">
-        <p
-          className={
-            revealed
-              ? "title-presents-settle text-sm uppercase tracking-[0.5em] text-onam-cream/70 sm:text-base"
-              : "title-presents-in text-xl uppercase tracking-[0.5em] text-onam-cream sm:text-2xl"
-          }
-        >
-          {titleHook.presentedBy}
-        </p>
+        {phase === 0 && (
+          <p className="title-presents-in text-xl uppercase tracking-[0.5em] text-onam-cream sm:text-2xl">
+            {titleHook.presentedBy}
+          </p>
+        )}
 
-        {revealed && (
+        {phase === 1 && (
           <div className="flex flex-col items-center gap-4">
             <span className="title-heading-in text-shimmer text-[8rem] font-black leading-none drop-shadow-[0_0_70px_rgba(232,181,69,0.55)] sm:text-[11rem]">
               {titleHook.heading}
             </span>
-            <p className="date-reveal-label text-lg uppercase tracking-[0.4em] text-onam-gold/80 sm:text-xl">
-              {titleHook.subheading}
-            </p>
           </div>
         )}
+
+        {phase === 2 && (
+          <p className="date-reveal-label max-w-4xl px-6 text-center text-2xl leading-tight text-onam-cream/90 sm:text-4xl normal-case tracking-normal">
+            {titleHook.introCopy}
+          </p>
+        )}
+
+        {phase === 3 && (
+          <span className="title-heading-in text-shimmer px-6 text-center text-5xl font-black leading-tight sm:text-7xl">
+            {titleHook.lookbackTitle}
+          </span>
+        )}
+
       </div>
     </div>
   );

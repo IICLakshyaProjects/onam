@@ -20,7 +20,7 @@ type PresentationControlsProps = {
  *   ARROW RIGHT  next scene
  *   ARROW LEFT   previous scene
  *   F            toggle fullscreen
- *   R            restart presentation
+ *   S / R        restart presentation
  *   ESC          exit fullscreen
  *   1-7          jump directly to a scene (dev/testing aid)
  */
@@ -52,6 +52,7 @@ export default function PresentationControls({
           toggleFullscreen();
           break;
         case "KeyR":
+        case "KeyS":
           onRestart();
           break;
         case "Escape":
