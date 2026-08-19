@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { Team, onamConfig } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
@@ -34,6 +34,7 @@ function motifsForTeam(index: number): MotifType[] {
 
 type TeamRevealProps = {
   teams: Team[];
+  bgmSrc: string;
   stepMs: number;
   outroMs: number;
   motifImages: (typeof onamConfig)["media"]["motifImages"];
@@ -46,6 +47,7 @@ const ENTRANCE_VARIANTS = ["reveal-zoom", "reveal-slide-left", "reveal-slide-rig
 
 export default function TeamReveal({
   teams,
+  bgmSrc,
   stepMs,
   outroMs,
   motifImages,
@@ -54,6 +56,7 @@ export default function TeamReveal({
   onIndexChange,
 }: TeamRevealProps) {
   const [index, setIndex] = useState(0);
+  const bgmRef = useRef<HTMLAudioElement | null>(null);
 
   const durations =
     teams.length === 0 ? [1] : teams.map((_, i) => (i === teams.length - 1 ? stepMs + outroMs : stepMs));
@@ -69,6 +72,46 @@ export default function TeamReveal({
     `teams-${teams.length}-${stepMs}`
   );
 
+  useEffect(() => {
+    const audio = bgmRef.current;
+    if (!audio) return;
+
+    const startAt = 0;
+    const primeAndPlay = () => {
+      audio.volume = 0.12;
+      if (audio.currentTime < startAt || audio.currentTime > startAt + 0.5) {
+        audio.currentTime = startAt;
+      }
+      audio.play().catch(() => {});
+    };
+
+    const onLoadedMetadata = () => {
+      primeAndPlay();
+    };
+
+    if (audio.readyState >= 1) {
+      primeAndPlay();
+    } else {
+      audio.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
+    }
+
+    return () => {
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.pause();
+    };
+  }, [bgmSrc]);
+
+  useEffect(() => {
+    const audio = bgmRef.current;
+    if (!audio) return;
+
+    if (paused) {
+      audio.pause();
+    } else {
+      audio.play().catch(() => {});
+    }
+  }, [paused]);
+
   if (teams.length === 0) return null;
 
   const team = teams[index];
@@ -76,6 +119,7 @@ export default function TeamReveal({
 
   return (
     <div className="onam-stage scene-enter flex flex-col items-center justify-center">
+      <audio ref={bgmRef} src={bgmSrc} preload="auto" />
       <div className="light-rays" />
       <RangoliGlow />
       <Particles density={26} paused={paused} />

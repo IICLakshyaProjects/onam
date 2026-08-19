@@ -17,13 +17,6 @@ export type Team = {
   tagline?: string;
 };
 
-/** Builds `{ name: ["/media/motifs/name.webp", "/media/motifs/name.png"] }` for each motif so either file format works. */
-function motifCandidates(names: string[]): Record<string, string[]> {
-  return Object.fromEntries(
-    names.map((name) => [name, [`/media/motifs/${name}.webp`, `/media/motifs/${name}.png`]])
-  );
-}
-
 export const onamConfig = {
   event: {
     heading: "ONAM CELEBRATION",
@@ -31,12 +24,15 @@ export const onamConfig = {
     year: new Date().getFullYear().toString(),
   },
 
-  /** Opening hook shown before the previous-year video - presenter credit, then the title. */
+  /** Opening hook shown before the previous-year video. */
   titleHook: {
-    presentedBy: "IIC Lakshya Presents",
-    heading: "ONAM 2K26",
-    introCopy: "Before we celebrate this year, let\u2019s revisit the moments that made last Onam unforgettable\u2026",
+    introCopy: "HI Lakshya......... Before we celebrate this year, let\u2019s revisit the moments that made last Onam unforgettable\u2026",
     lookbackTitle: "A Look Back at Onam 2025",
+  },
+
+  /** Short credit card shown after the first video finishes. */
+  postVideoCredit: {
+    presentedBy: "Now here IIC Lakshya Presents",
   },
 
   media: {
@@ -44,40 +40,27 @@ export const onamConfig = {
     // Swap back to a local "/media/previous-onam.mp4" path any time by dropping the file in public/media/.
     previousYearVideo: "https://lakshyamailerimages.s3.ap-south-1.amazonaws.com/Lakshyaarav+Promo+(1).mp4",
     revileVideo: "/media/My%20First%20Project.mp4",
-    programsBgm: "/media/Thiruvaavaniraavu%20(Instrumental%20Version).mp3",
+    programsBgm: "/media/Onam%20Banger%20%20Baluccciii%20%20Himna%20Hilari%20%20Hinitha%20Hilary%20%20Chris%20Wayne%20%20Saina%20Music%20Indie.mp3",
     poster: "/media/onam-poster.png",
-    // Optional real photos for the background motifs (chenda, pulikali, etc).
-    // Drop a file at either extension for a given name - .webp or .png,
-    // whichever you have - and that motif switches from the drawn icon to
-    // your photo automatically, no other change needed. Both are just
-    // candidates; leaving both unmet keeps using the illustrated icon.
-    motifImages: motifCandidates([
-      "chenda",
-      "pulikali",
-      "lamp",
-      "pookalam",
-      "leaf",
-      "boat",
-      "thiruvathira",
-      "sadya",
-    ]),
+    // Leave empty unless you actually add real motif images under
+    // /public/media/motifs/. The presentation uses the built-in vector
+    // motifs by default, so an empty object avoids pointless 404 checks.
+    motifImages: {},
   },
 
   /** Set to false to keep the presentation on the final date screen instead of looping. */
   loop: false,
 
   /** Index where the post-cultural event section begins. */
-  programSectionBreakIndex: 9,
+  programSectionBreakIndex: 8,
 
   durations: {
-    /** How long the "presented by" credit is held alone before the main title bursts in (ms). */
-    titlePresentedByMs: 2600,
-    /** How long the main title hook is held on screen before moving on to the intro line (ms). */
-    titleHeadingMs: 4200,
     /** How long the intro line is held before fading into the look-back title (ms). */
     titleIntroMs: 3600,
     /** How long the look-back title is held before moving on to the video (ms). */
     titleLookbackMs: 2400,
+    /** How long the post-video credit card is held (ms). */
+    postVideoCreditMs: 2400,
     /** Fallback duration (ms) for the previous-year video scene if the video is missing / fails to load. */
     previousVideoFallback: 8000,
     /** Starting number for the countdown; it always counts all the way down through 0 (one visual beat per second). */

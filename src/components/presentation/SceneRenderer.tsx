@@ -4,6 +4,7 @@ import { onamConfig } from "@/config/onam";
 import type { Scene } from "@/components/presentation/types";
 import TitleHook from "@/components/presentation/TitleHook";
 import PreviousYearVideo from "@/components/presentation/PreviousYearVideo";
+import PostVideoCredit from "@/components/presentation/PostVideoCredit";
 import CountdownScene from "@/components/presentation/CountdownScene";
 import PosterReveal from "@/components/presentation/PosterReveal";
 import ProgramsReveal from "@/components/presentation/ProgramsReveal";
@@ -44,7 +45,7 @@ export default function SceneRenderer({
   onTeamIndexChange,
 }: SceneRendererProps) {
   const key = `${scene}-${runId}`;
-  const { media, durations, programs, teams, dateReveal, titleHook } = onamConfig;
+  const { media, durations, programs, teams, dateReveal, titleHook, postVideoCredit } = onamConfig;
 
   switch (scene) {
     case "title":
@@ -53,8 +54,6 @@ export default function SceneRenderer({
           key={key}
           titleHook={titleHook}
           motifImages={media.motifImages}
-          presentedByMs={durations.titlePresentedByMs}
-          headingMs={durations.titleHeadingMs}
           introMs={durations.titleIntroMs}
           lookbackMs={durations.titleLookbackMs}
           paused={paused}
@@ -70,6 +69,18 @@ export default function SceneRenderer({
           fallbackDurationMs={durations.previousVideoFallback}
           motifImages={media.motifImages}
           videoMode="original"
+          paused={paused}
+          onComplete={onSceneComplete}
+        />
+      );
+
+    case "post-video-credit":
+      return (
+        <PostVideoCredit
+          key={key}
+          postVideoCredit={postVideoCredit}
+          motifImages={media.motifImages}
+          durationMs={durations.postVideoCreditMs}
           paused={paused}
           onComplete={onSceneComplete}
         />
@@ -136,6 +147,7 @@ export default function SceneRenderer({
         <TeamReveal
           key={key}
           teams={teams}
+          bgmSrc={media.programsBgm}
           stepMs={durations.teamStepMs}
           outroMs={durations.teamsOutroMs}
           motifImages={media.motifImages}

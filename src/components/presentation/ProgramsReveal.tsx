@@ -26,6 +26,8 @@ type ProgramsRevealProps = {
 };
 
 const ENTRANCE_VARIANTS = ["reveal-rise", "reveal-slide-left", "reveal-slide-right", "reveal-zoom"] as const;
+const INTRO_ITEMS = ["REEL COMPETATION", "POOKALAM", "THIRUVATHIRA", "CHEND MELAM"] as const;
+const BRIDGE_ITEMS = ["Onam Sadhya", "Photoshoot Session", "Outdoor Games"] as const;
 
 export default function ProgramsReveal({
   programs,
@@ -42,18 +44,29 @@ export default function ProgramsReveal({
 }: ProgramsRevealProps) {
   const [index, setIndex] = useState(0);
   const bgmRef = useRef<HTMLAudioElement | null>(null);
+  const displayPrograms = programs.filter((program) => program.title !== "Chenda Melam");
 
-  const culturalCount = Math.max(0, Math.min(sectionBreakIndex, programs.length));
-  const eventCount = Math.max(0, programs.length - culturalCount);
-  const bridgeIndex = culturalCount + 1;
+  const culturalCount = Math.max(0, Math.min(sectionBreakIndex, displayPrograms.length));
+  const eventCount = Math.max(0, displayPrograms.length - culturalCount);
+  const introListStartIndex = 1;
+  const introListEndIndex = introListStartIndex + INTRO_ITEMS.length - 1;
+  const cultureHeadingIndex = introListEndIndex + 1;
+  const culturalProgramStartIndex = cultureHeadingIndex + 1;
+  const bridgeHeadingIndex = culturalProgramStartIndex + culturalCount;
+  const bridgeItemStartIndex = bridgeHeadingIndex + 1;
+  const bridgeItemEndIndex = bridgeItemStartIndex + BRIDGE_ITEMS.length - 1;
+  const eventProgramStartIndex = bridgeItemEndIndex + 1;
 
   const durations =
     programs.length === 0
       ? [introMs]
       : [
           introMs,
-          ...programs.slice(0, culturalCount).map((_, i) => (i === culturalCount - 1 ? stepMs : stepMs)),
+          stepMs,
+          ...INTRO_ITEMS.map(() => stepMs),
+          ...programs.slice(0, culturalCount).map(() => stepMs),
           bridgeMs,
+          ...BRIDGE_ITEMS.map(() => stepMs),
           ...programs.slice(culturalCount).map((_, i) => (i === eventCount - 1 ? stepMs + outroMs : stepMs)),
         ];
 
@@ -61,10 +74,10 @@ export default function ProgramsReveal({
     durations,
     (i) => {
       setIndex(i);
-      if (i > 0 && i <= culturalCount) {
-        onIndexChange?.(i - 1);
-      } else if (i > bridgeIndex) {
-        onIndexChange?.(i - 2);
+      if (i >= culturalProgramStartIndex && i < eventProgramStartIndex) {
+        onIndexChange?.(i - culturalProgramStartIndex);
+      } else if (i >= eventProgramStartIndex) {
+        onIndexChange?.(i - eventProgramStartIndex);
       }
     },
     onComplete,
@@ -73,22 +86,37 @@ export default function ProgramsReveal({
   );
 
   const showingIntro = index === 0;
-  const showingBridge = index === bridgeIndex;
-  const culturalProgramIndex = Math.max(0, index - 1);
-  const eventProgramIndex = Math.max(0, index - 2);
-  const program = showingBridge
-    ? undefined
-    : index > culturalCount
-      ? programs[eventProgramIndex]
-      : programs[culturalProgramIndex];
-  const variant = ENTRANCE_VARIANTS[(showingBridge ? eventProgramIndex : culturalProgramIndex) % ENTRANCE_VARIANTS.length];
-  const showingEventPhase = index > culturalCount;
+  const showingIntroItem = index >= introListStartIndex && index <= introListEndIndex;
+  const showingCultureHeading = index === cultureHeadingIndex;
+  const showingBridgeHeading = index === bridgeHeadingIndex;
+  const showingBridgeItem = index >= bridgeItemStartIndex && index <= bridgeItemEndIndex;
+  const culturalProgramIndex = Math.max(0, index - culturalProgramStartIndex);
+  const eventProgramIndex = Math.max(0, index - eventProgramStartIndex);
+  const program =
+    index >= culturalProgramStartIndex && index < bridgeHeadingIndex
+      ? displayPrograms[culturalProgramIndex]
+      : index >= eventProgramStartIndex
+        ? displayPrograms[eventProgramIndex]
+        : undefined;
+  const variant =
+    ENTRANCE_VARIANTS[
+      (showingBridgeHeading
+        ? eventProgramIndex
+        : showingBridgeItem
+          ? index - bridgeItemStartIndex
+        : index >= eventProgramStartIndex
+          ? eventProgramIndex
+          : index >= culturalProgramStartIndex
+            ? culturalProgramIndex
+          : index - 1) % ENTRANCE_VARIANTS.length
+    ];
+  const showingEventPhase = index >= eventProgramStartIndex;
 
   useEffect(() => {
     const audio = bgmRef.current;
     if (!audio) return;
 
-    const startAt = 4;
+    const startAt = 0;
     const primeAndPlay = () => {
       audio.volume = 0.12;
       if (audio.currentTime < startAt || audio.currentTime > startAt + 0.5) {
@@ -143,19 +171,40 @@ export default function ProgramsReveal({
 
       {showingIntro ? (
         <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
+          <div className="mt-8 min-h-24 flex items-center justify-center">
+            <h2 className="title-heading-in text-shimmer text-6xl font-black uppercase tracking-[0.2em] sm:text-8xl">
+              ONAM Programs
+            </h2>
+          </div>
+        </div>
+      ) : showingIntroItem ? (
+        <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
+          {/* <p className="text-sm uppercase tracking-[0.7em] text-onam-cream/70">ONAM Programs</p> */}
+          <div className="mt-8 min-h-24 flex items-center justify-center">
+            <span className="title-heading-in text-shimmer text-4xl font-black uppercase tracking-[0.28em] sm:text-6xl">
+              {INTRO_ITEMS[index - introListStartIndex]}
+            </span>
+          </div>
+        </div>
+      ) : showingCultureHeading ? (
+        <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center gap-6 px-10 text-center">
           <h2 className="title-heading-in text-shimmer text-6xl font-black uppercase tracking-[0.2em] sm:text-8xl">
-            Our CultureEvents
+            Our Cultural Events
           </h2>
         </div>
-      ) : showingBridge ? (
+      ) : showingBridgeHeading ? (
         <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center gap-6 px-10 text-center">
-          <p className="text-sm uppercase tracking-[0.7em] text-onam-cream/70">Following the event</p>
-          <h2 className="text-shimmer text-5xl font-black uppercase tracking-wide sm:text-7xl">
-            We will be having
-          </h2>
-          {/* <p className="max-w-3xl text-xl leading-tight text-onam-cream/85 sm:text-3xl">
-            Onam Sadhya, Photoshoot Session and exciting Outdoor Games
-          </p> */}
+          <p className="text-sm uppercase tracking-[0.7em] text-onam-cream/70">Following this event</p>
+          <h2 className="text-shimmer text-5xl font-black uppercase tracking-wide sm:text-7xl">We will be having</h2>
+        </div>
+      ) : showingBridgeItem ? (
+        <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
+          <p className="text-sm uppercase tracking-[0.7em] text-onam-cream/70">Following this event</p>
+          <div className="mt-8 min-h-24 flex items-center justify-center">
+            <span className="title-heading-in text-shimmer text-4xl font-black uppercase tracking-[0.28em] sm:text-6xl">
+              {BRIDGE_ITEMS[index - bridgeItemStartIndex]}
+            </span>
+          </div>
         </div>
       ) : program ? (
         <div
@@ -171,9 +220,9 @@ export default function ProgramsReveal({
         </div>
       ) : null}
 
-      {!showingIntro && !showingBridge && (
+      {!showingIntro && !showingBridgeHeading && !showingBridgeItem && (
         <div className="absolute bottom-14 z-10 flex gap-3">
-          {programs.map((p, i) => (
+          {displayPrograms.map((p, i) => (
             <span
               key={p.title}
               className={`h-2 w-2 rounded-full transition-all duration-500 ${
