@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { Program, onamConfig } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import Petals from "@/components/effects/Petals";
@@ -14,11 +14,9 @@ import SpotlightSweep from "@/components/effects/SpotlightSweep";
 type ProgramsRevealProps = {
   programs: Program[];
   sectionBreakIndex: number;
-  bgmSrc: string;
   introMs: number;
   bridgeMs: number;
   stepMs: number;
-  outroMs: number;
   motifImages: (typeof onamConfig)["media"]["motifImages"];
   paused: boolean;
   onComplete: () => void;
@@ -32,22 +30,18 @@ const BRIDGE_ITEMS = ["Onam Sadhya", "Photoshoot Session", "Outdoor Games"] as c
 export default function ProgramsReveal({
   programs,
   sectionBreakIndex,
-  bgmSrc,
   introMs,
   bridgeMs,
   stepMs,
-  outroMs,
   motifImages,
   paused,
   onComplete,
   onIndexChange,
 }: ProgramsRevealProps) {
   const [index, setIndex] = useState(0);
-  const bgmRef = useRef<HTMLAudioElement | null>(null);
   const displayPrograms = programs.filter((program) => program.title !== "Chenda Melam");
 
   const culturalCount = Math.max(0, Math.min(sectionBreakIndex, displayPrograms.length));
-  const eventCount = Math.max(0, displayPrograms.length - culturalCount);
   const introListStartIndex = 1;
   const introListEndIndex = introListStartIndex + INTRO_ITEMS.length - 1;
   const cultureHeadingIndex = introListEndIndex + 1;
@@ -55,7 +49,6 @@ export default function ProgramsReveal({
   const bridgeHeadingIndex = culturalProgramStartIndex + culturalCount;
   const bridgeItemStartIndex = bridgeHeadingIndex + 1;
   const bridgeItemEndIndex = bridgeItemStartIndex + BRIDGE_ITEMS.length - 1;
-  const eventProgramStartIndex = bridgeItemEndIndex + 1;
 
   const durations =
     programs.length === 0
@@ -67,17 +60,14 @@ export default function ProgramsReveal({
           ...programs.slice(0, culturalCount).map(() => stepMs),
           bridgeMs,
           ...BRIDGE_ITEMS.map(() => stepMs),
-          ...programs.slice(culturalCount).map((_, i) => (i === eventCount - 1 ? stepMs + outroMs : stepMs)),
         ];
 
   usePausableSequence(
     durations,
     (i) => {
       setIndex(i);
-      if (i >= culturalProgramStartIndex && i < eventProgramStartIndex) {
+      if (i >= culturalProgramStartIndex && i < bridgeHeadingIndex) {
         onIndexChange?.(i - culturalProgramStartIndex);
-      } else if (i >= eventProgramStartIndex) {
-        onIndexChange?.(i - eventProgramStartIndex);
       }
     },
     onComplete,
@@ -91,70 +81,20 @@ export default function ProgramsReveal({
   const showingBridgeHeading = index === bridgeHeadingIndex;
   const showingBridgeItem = index >= bridgeItemStartIndex && index <= bridgeItemEndIndex;
   const culturalProgramIndex = Math.max(0, index - culturalProgramStartIndex);
-  const eventProgramIndex = Math.max(0, index - eventProgramStartIndex);
-  const program =
-    index >= culturalProgramStartIndex && index < bridgeHeadingIndex
-      ? displayPrograms[culturalProgramIndex]
-      : index >= eventProgramStartIndex
-        ? displayPrograms[eventProgramIndex]
-        : undefined;
+  const program = index >= culturalProgramStartIndex && index < bridgeHeadingIndex ? displayPrograms[culturalProgramIndex] : undefined;
   const variant =
     ENTRANCE_VARIANTS[
       (showingBridgeHeading
-        ? eventProgramIndex
+        ? 0
         : showingBridgeItem
           ? index - bridgeItemStartIndex
-        : index >= eventProgramStartIndex
-          ? eventProgramIndex
           : index >= culturalProgramStartIndex
             ? culturalProgramIndex
-          : index - 1) % ENTRANCE_VARIANTS.length
+            : index - 1) % ENTRANCE_VARIANTS.length
     ];
-  const showingEventPhase = index >= eventProgramStartIndex;
-
-  useEffect(() => {
-    const audio = bgmRef.current;
-    if (!audio) return;
-
-    const startAt = 0;
-    const primeAndPlay = () => {
-      audio.volume = 0.12;
-      if (audio.currentTime < startAt || audio.currentTime > startAt + 0.5) {
-        audio.currentTime = startAt;
-      }
-      audio.play().catch(() => {});
-    };
-
-    const onLoadedMetadata = () => {
-      primeAndPlay();
-    };
-
-    if (audio.readyState >= 1) {
-      primeAndPlay();
-    } else {
-      audio.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
-    }
-
-    return () => {
-      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
-      audio.pause();
-    };
-  }, [bgmSrc]);
-
-  useEffect(() => {
-    const audio = bgmRef.current;
-    if (!audio) return;
-
-    if (paused) {
-      audio.pause();
-    } else {
-      audio.play().catch(() => {});
-    }
-  }, [paused]);
 
   return (
     <div className="onam-stage scene-enter flex flex-col items-center justify-center">
-      <audio ref={bgmRef} src={bgmSrc} preload="auto" />
       <div className="light-rays" />
       <div className="glow-orb h-[36rem] w-[36rem]" />
       <RangoliGlow />
@@ -199,7 +139,7 @@ export default function ProgramsReveal({
         </div>
       ) : showingBridgeItem ? (
         <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
-          <p className="text-sm uppercase tracking-[0.7em] text-onam-cream/70">Following this event</p>
+          {/* <p className="text-sm uppercase tracking-[0.7em] text-onam-cream/70">Following this event</p> */}
           <div className="mt-8 min-h-24 flex items-center justify-center">
             <span className="title-heading-in text-shimmer text-4xl font-black uppercase tracking-[0.28em] sm:text-6xl">
               {BRIDGE_ITEMS[index - bridgeItemStartIndex]}
@@ -208,7 +148,7 @@ export default function ProgramsReveal({
         </div>
       ) : program ? (
         <div
-          key={showingEventPhase ? eventProgramIndex : culturalProgramIndex}
+          key={culturalProgramIndex}
           className={`${variant} relative z-10 flex max-w-4xl flex-col items-center gap-8 px-10 text-center`}
         >
           <div className="glow-orb h-64 w-64" style={{ top: "-2rem" }} />
@@ -226,7 +166,7 @@ export default function ProgramsReveal({
             <span
               key={p.title}
               className={`h-2 w-2 rounded-full transition-all duration-500 ${
-                i === (showingEventPhase ? eventProgramIndex : culturalProgramIndex) ? "w-8 bg-onam-gold" : "bg-onam-gold/30"
+                i === culturalProgramIndex ? "w-8 bg-onam-gold" : "bg-onam-gold/30"
               }`}
             />
           ))}

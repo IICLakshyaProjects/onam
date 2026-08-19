@@ -39,7 +39,8 @@ export const onamConfig = {
     // Hosted remotely (the local /public/media/previous-onam.mp4 copy was removed).
     // Swap back to a local "/media/previous-onam.mp4" path any time by dropping the file in public/media/.
     previousYearVideo: "https://lakshyamailerimages.s3.ap-south-1.amazonaws.com/Lakshyaarav+Promo+(1).mp4",
-    revileVideo: "/media/My%20First%20Project.mp4",
+    revileVideo: "/media/onam%20video%20countdown.mp4",
+    lastVideo: "/media/last.mp4",
     programsBgm: "/media/Onam%20Banger%20%20Baluccciii%20%20Himna%20Hilari%20%20Hinitha%20Hilary%20%20Chris%20Wayne%20%20Saina%20Music%20Indie.mp3",
     poster: "/media/onam-poster.png",
     // Leave empty unless you actually add real motif images under

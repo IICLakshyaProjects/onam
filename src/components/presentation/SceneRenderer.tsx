@@ -2,6 +2,7 @@
 
 import { onamConfig } from "@/config/onam";
 import type { Scene } from "@/components/presentation/types";
+import ProgramsTeamsMusic from "@/components/presentation/ProgramsTeamsMusic";
 import TitleHook from "@/components/presentation/TitleHook";
 import PreviousYearVideo from "@/components/presentation/PreviousYearVideo";
 import PostVideoCredit from "@/components/presentation/PostVideoCredit";
@@ -46,8 +47,17 @@ export default function SceneRenderer({
 }: SceneRendererProps) {
   const key = `${scene}-${runId}`;
   const { media, durations, programs, teams, dateReveal, titleHook, postVideoCredit } = onamConfig;
+  const shouldPlayProgramsMusic = scene === "programs" || scene === "teams";
 
-  switch (scene) {
+  return (
+    <>
+      <ProgramsTeamsMusic src={media.programsBgm} active={shouldPlayProgramsMusic} paused={paused} />
+      {renderScene()}
+    </>
+  );
+
+  function renderScene() {
+    switch (scene) {
     case "title":
       return (
         <TitleHook
@@ -130,11 +140,9 @@ export default function SceneRenderer({
           key={key}
           programs={programs}
           sectionBreakIndex={onamConfig.programSectionBreakIndex}
-          bgmSrc={media.programsBgm}
           introMs={durations.programIntroMs}
           bridgeMs={durations.programBridgeMs}
           stepMs={durations.programStepMs}
-          outroMs={durations.programsOutroMs}
           motifImages={media.motifImages}
           paused={paused}
           onComplete={onSceneComplete}
@@ -147,13 +155,26 @@ export default function SceneRenderer({
         <TeamReveal
           key={key}
           teams={teams}
-          bgmSrc={media.programsBgm}
           stepMs={durations.teamStepMs}
           outroMs={durations.teamsOutroMs}
           motifImages={media.motifImages}
           paused={paused}
           onComplete={onSceneComplete}
           onIndexChange={onTeamIndexChange}
+        />
+      );
+
+    case "team-video":
+      return (
+        <PreviousYearVideo
+          key={key}
+          src={media.lastVideo}
+          fallbackDurationMs={durations.previousVideoFallback}
+          motifImages={media.motifImages}
+          videoMode="original"
+          paused={paused}
+          holdOnEnd
+          onComplete={onSceneComplete}
         />
       );
 
@@ -187,17 +208,11 @@ export default function SceneRenderer({
             count={6}
             imageSrcs={media.motifImages}
           />
-          <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-            <p className="text-base uppercase tracking-[0.6em] text-onam-gold/80">{dateReveal.line1}</p>
-            <span className="text-shimmer text-[10rem] font-black leading-none sm:text-[14rem]">
-              {dateReveal.month} {dateReveal.day}
-            </span>
-            <p className="text-2xl uppercase tracking-[0.4em] text-onam-cream/70">{dateReveal.line2}</p>
-          </div>
         </div>
       );
 
     default:
       return null;
+    }
   }
 }

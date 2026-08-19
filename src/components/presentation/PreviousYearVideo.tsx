@@ -18,6 +18,7 @@ type PreviousYearVideoProps = {
   videoMode?: "original" | "enlarged";
   paused: boolean;
   onComplete: () => void;
+  holdOnEnd?: boolean;
 };
 
 /**
@@ -35,6 +36,7 @@ export default function PreviousYearVideo({
   videoMode = "original",
   paused,
   onComplete,
+  holdOnEnd = false,
 }: PreviousYearVideoProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [failed, setFailed] = useState(false);
@@ -80,11 +82,11 @@ export default function PreviousYearVideo({
 
   // Only used when the video can't play at all — advances the presentation on a timer instead.
   usePausableSequence(
-    failed ? [fallbackDurationMs] : [],
+    failed && !holdOnEnd ? [fallbackDurationMs] : [],
     () => {},
     onComplete,
     paused,
-    failed ? "fallback" : "video"
+    failed && !holdOnEnd ? "fallback" : "video"
   );
 
   return (
@@ -100,7 +102,11 @@ export default function PreviousYearVideo({
             }
             src={src}
             playsInline
-            onEnded={onComplete}
+            onEnded={() => {
+              const video = videoRef.current;
+              if (video) video.pause();
+              if (!holdOnEnd) onComplete();
+            }}
             onError={() => setFailed(true)}
           />
         </div>

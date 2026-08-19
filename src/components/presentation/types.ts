@@ -7,6 +7,7 @@ export type Scene =
   | "poster"
   | "programs"
   | "teams"
+  | "team-video"
   | "date"
   | "finished";
 
@@ -18,6 +19,7 @@ export const SCENE_ORDER: Scene[] = [
   "revile-video",
   "programs",
   "teams",
+  "team-video",
   "date",
 ];
 
