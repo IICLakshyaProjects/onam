@@ -162,7 +162,7 @@ export default function ProgramsReveal({
       <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">Programs &amp; Events</p>
 
       {showingReelBeat && (
-        <div className="pointer-events-none absolute inset-y-0 left-1/2 z-[5] w-full max-w-6xl -translate-x-1/2 overflow-hidden border-x border-onam-gold/20 bg-black/35">
+        <div className="pointer-events-none absolute inset-y-0 left-1/2 z-[5] w-full max-w-6xl -translate-x-1/2 overflow-hidden border-x border-onam-gold/20 bg-black/18">
           <div className="grid h-full w-full grid-cols-3">
             {reelVideoSources.map((src, i) => (
               <div key={src} className="relative h-full min-w-0 border-onam-gold/15 [&:not(:last-child)]:border-r">
@@ -170,7 +170,7 @@ export default function ProgramsReveal({
                   ref={(el) => {
                     reelVideoRefs.current[i] = el;
                   }}
-                  className="h-full w-full object-cover opacity-75"
+                  className="h-full w-full object-cover opacity-92"
                   src={src}
                   muted
                   playsInline
@@ -179,7 +179,7 @@ export default function ProgramsReveal({
               </div>
             ))}
           </div>
-          <div className="absolute inset-0 bg-black/25" />
+          <div className="absolute inset-0 bg-black/10" />
         </div>
       )}
 

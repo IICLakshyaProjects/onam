@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { onamConfig } from "@/config/onam";
 import type { Scene } from "@/components/presentation/types";
 import ProgramsTeamsMusic from "@/components/presentation/ProgramsTeamsMusic";
@@ -47,11 +48,15 @@ export default function SceneRenderer({
 }: SceneRendererProps) {
   const key = `${scene}-${runId}`;
   const { media, durations, programs, teams, dateReveal, titleHook, postVideoCredit } = onamConfig;
-  const shouldPlayProgramsMusic = scene === "programs" || scene === "teams";
+  const shouldPlayProgramsMusic = scene === "programs" || scene === "teams" || scene === "finished";
 
   return (
     <>
-      <ProgramsTeamsMusic src={media.programsBgm} active={shouldPlayProgramsMusic} paused={paused} />
+      <ProgramsTeamsMusic
+        src={media.programsBgm}
+        active={shouldPlayProgramsMusic}
+        paused={paused}
+      />
       {renderScene()}
     </>
   );
@@ -184,32 +189,77 @@ export default function SceneRenderer({
 
     case "finished":
       return (
-        <div key={key} className="onam-stage scene-enter flex flex-col items-center justify-center">
-          <div className="light-rays" />
-          <div className="glow-orb h-[42rem] w-[42rem]" />
-          <RangoliGlow />
-          <SpotlightSweep triggerKey="finished" />
-          <Particles density={24} paused={paused} />
-          <Petals density={12} paused={paused} />
-          <Confetti density={16} paused={paused} />
-          <Fireworks auto autoIntervalMs={1800} paused={paused} />
-          <ChendaBeat beatTrigger="finished" paused={paused} />
-          <OnamMotifField
-            types={["chenda", "pulikali", "lamp", "pookalam", "leaf", "boat"]}
-            count={6}
-            imageSrcs={media.motifImages}
-          />
-          <div className="relative z-10 flex flex-col items-center px-8 text-center">
-            {/* <p className="text-xs uppercase tracking-[0.85em] text-onam-cream/70">Closing Message</p> */}
-            <h2 className="title-heading-in text-shimmer mt-6 text-5xl font-black uppercase tracking-[0.22em] sm:text-7xl">
-              Advance Happy Onam
-            </h2>
-          </div>
-        </div>
+        <ClosingReveal key={key} paused={paused} motifImages={media.motifImages} />
       );
 
     default:
       return null;
     }
   }
+}
+
+function ClosingReveal({
+  paused,
+  motifImages,
+}: {
+  paused: boolean;
+  motifImages: (typeof onamConfig)["media"]["motifImages"];
+}) {
+  const [phase, setPhase] = useState<0 | 1>(0);
+
+  useEffect(() => {
+    const first = window.setTimeout(() => setPhase(1), 2400);
+    return () => window.clearTimeout(first);
+  }, []);
+
+  useEffect(() => {
+    if (phase !== 1) return;
+
+    const fadeDelay = window.setTimeout(() => {
+      window.dispatchEvent(new Event("onam-closing-advance-visible"));
+    }, 300);
+    return () => window.clearTimeout(fadeDelay);
+  }, [phase]);
+
+  return (
+    <div className="onam-stage scene-enter flex flex-col items-center justify-center">
+      <div className="light-rays" />
+      <div className="glow-orb h-[42rem] w-[42rem]" />
+      <RangoliGlow />
+      <SpotlightSweep triggerKey="finished" />
+      <Particles density={24} paused={paused} />
+      <Petals density={12} paused={paused} />
+      <Confetti density={16} paused={paused} />
+      <Fireworks auto autoIntervalMs={1800} paused={paused} />
+      <ChendaBeat beatTrigger="finished" paused={paused} />
+      <OnamMotifField
+        types={["chenda", "pulikali", "lamp", "pookalam", "leaf", "boat"]}
+        count={6}
+        imageSrcs={motifImages}
+      />
+      <div className="relative z-10 flex flex-col items-center px-8 text-center">
+        <p
+          className={`max-w-5xl text-center text-2xl font-black uppercase tracking-[0.24em] sm:text-4xl ${
+            phase === 0 ? "title-heading-in text-shimmer opacity-100" : "opacity-0 transition-opacity duration-700"
+          }`}
+        >
+          And finally, you will be having an exciting surprise on the celebration day.
+        </p>
+        <p
+          className={`mt-6 text-xl font-black tracking-[0.18em] sm:text-3xl ${
+            phase === 0 ? "opacity-0 transition-opacity duration-700" : "title-heading-in text-shimmer opacity-100"
+          }`}
+        >
+          അപ്പോ സെപ്റ്റംബർ 02-ന് കാണാം
+        </p>
+        <p
+          className={`mt-8 text-5xl font-black uppercase tracking-[0.22em] sm:text-7xl ${
+            phase === 1 ? "title-heading-in text-shimmer opacity-100" : "opacity-0 transition-opacity duration-700"
+          }`}
+        >
+          Advance Happy Onam
+        </p>
+      </div>
+    </div>
+  );
 }
