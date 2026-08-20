@@ -1,33 +1,53 @@
 "use client";
 
-import { useEffect, type CSSProperties } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 
 type OnamCurtainIntroProps = {
   onComplete: () => void;
 };
 
-/** 0.0s – 0.5s: curtain holds closed. */
+/** Brief hold after Enter before the pull begins (ms). */
 const CURTAIN_PAUSE_MS = 500;
-/** 0.5s – 4.0s: curtain pulls open from center. */
+/** Cinematic pull duration once triggered (ms). */
 const CURTAIN_OPEN_MS = 3500;
 
 /**
- * Theatrical Kerala/Onam stage curtain — fabric gathers from the center
- * toward both sides with curved inner edges. No dark overlay; the
- * presentation underneath stays visible through the opening immediately.
+ * Theatrical Kerala/Onam stage curtain — stays closed until Enter is
+ * pressed, then gathers from the center toward both sides.
  */
 export default function OnamCurtainIntro({ onComplete }: OnamCurtainIntroProps) {
+  const [opening, setOpening] = useState(false);
+
+  const beginOpening = useCallback(() => {
+    setOpening((current) => (current ? current : true));
+  }, []);
+
   useEffect(() => {
+    if (opening) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      beginOpening();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [opening, beginOpening]);
+
+  useEffect(() => {
+    if (!opening) return;
+
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const delay = prefersReducedMotion ? 1 : CURTAIN_PAUSE_MS + CURTAIN_OPEN_MS + 80;
 
     const id = window.setTimeout(onComplete, delay);
     return () => window.clearTimeout(id);
-  }, [onComplete]);
+  }, [opening, onComplete]);
 
   return (
     <div
-      className="onam-curtain-intro"
+      className={`onam-curtain-intro${opening ? " onam-curtain-intro--opening" : ""}`}
       aria-hidden
       style={
         {

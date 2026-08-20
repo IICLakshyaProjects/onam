@@ -208,7 +208,7 @@ function ClosingReveal({
   const [phase, setPhase] = useState<0 | 1>(0);
 
   useEffect(() => {
-    const first = window.setTimeout(() => setPhase(1), 2400);
+    const first = window.setTimeout(() => setPhase(1), 5000);
     return () => window.clearTimeout(first);
   }, []);
 

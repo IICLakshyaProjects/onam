@@ -727,14 +727,23 @@ body {
 .onam-curtain-drape-left {
   left: 0;
   transform-origin: left center;
-  animation: onam-curtain-drape-left-pull var(--curtain-open, 3.5s) cubic-bezier(0.42, 0.03, 0.22, 1) var(--curtain-pause, 500ms) forwards;
+  transform: scaleX(1) skewY(0deg);
 }
 
 .onam-curtain-drape-right {
   right: 0;
   transform-origin: right center;
+  transform: scaleX(1) skewY(0deg);
+}
+
+.onam-curtain-intro--opening .onam-curtain-drape-left {
+  animation: onam-curtain-drape-left-pull var(--curtain-open, 3.5s) cubic-bezier(0.42, 0.03, 0.22, 1) var(--curtain-pause, 500ms) forwards;
+}
+
+.onam-curtain-intro--opening .onam-curtain-drape-right {
   animation: onam-curtain-drape-right-pull var(--curtain-open, 3.5s) cubic-bezier(0.42, 0.03, 0.22, 1) var(--curtain-pause, 500ms) forwards;
 }
+
 
 .onam-curtain-drape-body {
   position: absolute;
@@ -856,6 +865,9 @@ body {
   inset: 0;
   pointer-events: none;
   opacity: 0.45;
+}
+
+.onam-curtain-intro--opening .onam-curtain-velvet-sheen {
   animation: onam-curtain-sheen-fade var(--curtain-open, 3.5s) ease-out var(--curtain-pause, 500ms) forwards;
 }
 
@@ -909,6 +921,9 @@ body {
   pointer-events: none;
   z-index: 3;
   opacity: 0;
+}
+
+.onam-curtain-intro--opening .onam-curtain-gather {
   animation: onam-curtain-gather-show var(--curtain-open, 3.5s) ease-out var(--curtain-pause, 500ms) forwards;
 }
 
@@ -924,11 +939,17 @@ body {
 
 .onam-curtain-gather-left {
   right: 0;
-  animation-name: onam-curtain-gather-show-left;
 }
 
 .onam-curtain-gather-right {
   left: 0;
+}
+
+.onam-curtain-intro--opening .onam-curtain-gather-left {
+  animation-name: onam-curtain-gather-show-left;
+}
+
+.onam-curtain-intro--opening .onam-curtain-gather-right {
   animation-name: onam-curtain-gather-show-right;
 }
 
@@ -983,11 +1004,11 @@ body {
 }
 
 /* Subtle fabric sway while being pulled. */
-.onam-curtain-drape-left .onam-curtain-velvet {
+.onam-curtain-intro--opening .onam-curtain-drape-left .onam-curtain-velvet {
   animation: onam-curtain-fabric-pull-left calc(var(--curtain-open, 3.5s) + 200ms) ease-in-out var(--curtain-pause, 500ms) 1;
 }
 
-.onam-curtain-drape-right .onam-curtain-velvet {
+.onam-curtain-intro--opening .onam-curtain-drape-right .onam-curtain-velvet {
   animation: onam-curtain-fabric-pull-right calc(var(--curtain-open, 3.5s) + 200ms) ease-in-out var(--curtain-pause, 500ms) 1;
 }
 
@@ -1046,19 +1067,19 @@ body {
   .light-rays,
   .text-shimmer,
   .scene-enter,
-  .onam-curtain-intro,
-  .onam-curtain-drape-left,
-  .onam-curtain-drape-right,
-  .onam-curtain-velvet,
-  .onam-curtain-gather-left,
-  .onam-curtain-gather-right,
-  .onam-curtain-velvet-sheen {
+  .onam-curtain-intro--opening,
+  .onam-curtain-intro--opening .onam-curtain-drape-left,
+  .onam-curtain-intro--opening .onam-curtain-drape-right,
+  .onam-curtain-intro--opening .onam-curtain-velvet,
+  .onam-curtain-intro--opening .onam-curtain-gather-left,
+  .onam-curtain-intro--opening .onam-curtain-gather-right,
+  .onam-curtain-intro--opening .onam-curtain-velvet-sheen {
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
   }
 
-  .onam-curtain-drape-left,
-  .onam-curtain-drape-right {
+  .onam-curtain-intro--opening .onam-curtain-drape-left,
+  .onam-curtain-intro--opening .onam-curtain-drape-right {
     transform: scaleX(0.16) !important;
   }
 }
