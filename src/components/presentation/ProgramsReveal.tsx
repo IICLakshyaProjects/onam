@@ -27,6 +27,21 @@ type ProgramsRevealProps = {
 const ENTRANCE_VARIANTS = ["reveal-rise", "reveal-slide-left", "reveal-slide-right", "reveal-zoom"] as const;
 const INTRO_ITEMS = ["REEL COMPETITION", "POOKALAM", "THIRUVATHIRA", "CHENDA MELAM"] as const;
 const BRIDGE_ITEMS = ["Onam Sadhya", "Photoshoot Session", "Outdoor Games"] as const;
+/** Default pause between each letter for intro/bridge typewriter items. */
+const TYPEWRITER_LETTER_DELAY_MS = 365;
+/** Slower pace for the opening reel-competition beat (~10s for 16 chars). */
+const REEL_COMPETITION_LETTER_DELAY_MS = 577;
+const TYPEWRITER_LETTER_ANIM_MS = 160;
+const TYPEWRITER_HOLD_AFTER_MS = 600;
+
+function typewriterLetterDelayMs(text: string) {
+  return text === "REEL COMPETITION" ? REEL_COMPETITION_LETTER_DELAY_MS : TYPEWRITER_LETTER_DELAY_MS;
+}
+
+function typewriterStepMs(text: string) {
+  const letterDelay = typewriterLetterDelayMs(text);
+  return text.length * letterDelay + TYPEWRITER_LETTER_ANIM_MS + TYPEWRITER_HOLD_AFTER_MS;
+}
 
 export default function ProgramsReveal({
   programs,
@@ -56,7 +71,14 @@ export default function ProgramsReveal({
   const durations =
     programs.length === 0
       ? [introMs]
-      : [introMs, stepMs, ...INTRO_ITEMS.map(() => stepMs), ...programs.slice(0, culturalCount).map(() => stepMs), bridgeMs, ...BRIDGE_ITEMS.map(() => stepMs)];
+      : [
+          introMs,
+          ...INTRO_ITEMS.map((item) => typewriterStepMs(item)),
+          stepMs,
+          ...programs.slice(0, culturalCount).map(() => stepMs),
+          bridgeMs,
+          ...BRIDGE_ITEMS.map((item) => typewriterStepMs(item)),
+        ];
 
   usePausableSequence(
     durations,
@@ -129,8 +151,22 @@ export default function ProgramsReveal({
 
       <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">Programs &amp; Events</p>
 
+      {showingReelBeat && (
+        <div className="pointer-events-none absolute inset-y-0 left-1/2 z-[5] w-full max-w-4xl -translate-x-1/2 overflow-hidden border-x border-onam-gold/20 bg-black/35">
+          <video
+            ref={videoRef}
+            className="h-full w-full object-cover opacity-75"
+            src={reelVideoSrc}
+            muted
+            playsInline
+            loop
+          />
+          <div className="absolute inset-0 bg-black/25" />
+        </div>
+      )}
+
       {showingIntro ? (
-        <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
+        <div className="reveal-rise relative z-10 flex w-full max-w-5xl flex-col items-center px-4 text-center sm:px-6">
           <div className="mt-8 min-h-24 flex items-center justify-center">
             <h2 className="title-heading-in text-shimmer text-6xl font-black uppercase tracking-[0.2em] sm:text-8xl">
               ONAM Programs
@@ -138,24 +174,12 @@ export default function ProgramsReveal({
           </div>
         </div>
       ) : showingIntroItem ? (
-        <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
-          {showingReelBeat && (
-            <div className="absolute inset-0 -z-10 overflow-hidden rounded-[2rem] border border-onam-gold/20 bg-black/35">
-              <video
-                ref={videoRef}
-                className="h-full w-full object-cover opacity-75"
-                src={reelVideoSrc}
-                muted
-                playsInline
-                loop
-              />
-              <div className="absolute inset-0 bg-black/25" />
-            </div>
-          )}
+        <div className="reveal-rise relative z-10 flex w-full max-w-5xl flex-col items-center px-4 text-center sm:px-6">
           <div className="mt-8 min-h-24 flex items-center justify-center">
             <TypewriterText
               text={INTRO_ITEMS[index - introListStartIndex]}
-              className="title-heading-in text-shimmer text-4xl font-black uppercase tracking-[0.28em] sm:text-6xl"
+              letterDelayMs={typewriterLetterDelayMs(INTRO_ITEMS[index - introListStartIndex])}
+              className="title-heading-in text-shimmer text-[clamp(1.35rem,4.8vw,3.75rem)] font-black uppercase tracking-[0.08em] sm:tracking-[0.14em]"
             />
           </div>
         </div>
@@ -171,11 +195,12 @@ export default function ProgramsReveal({
           <h2 className="text-shimmer text-5xl font-black uppercase tracking-wide sm:text-7xl">We Will Have</h2>
         </div>
       ) : showingBridgeItem ? (
-        <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
+        <div className="reveal-rise relative z-10 flex w-full max-w-5xl flex-col items-center px-4 text-center sm:px-6">
           <div className="mt-8 min-h-24 flex items-center justify-center">
             <TypewriterText
               text={BRIDGE_ITEMS[index - bridgeItemStartIndex]}
-              className="title-heading-in text-shimmer text-4xl font-black uppercase tracking-[0.28em] sm:text-6xl"
+              letterDelayMs={typewriterLetterDelayMs(BRIDGE_ITEMS[index - bridgeItemStartIndex])}
+              className="title-heading-in text-shimmer text-[clamp(1.35rem,4.8vw,3.75rem)] font-black uppercase tracking-[0.08em] sm:tracking-[0.14em]"
             />
           </div>
         </div>
@@ -209,14 +234,22 @@ export default function ProgramsReveal({
   );
 }
 
-function TypewriterText({ text, className }: { text: string; className: string }) {
+function TypewriterText({
+  text,
+  className,
+  letterDelayMs,
+}: {
+  text: string;
+  className: string;
+  letterDelayMs: number;
+}) {
   return (
-    <span className={className}>
+    <span className={`typewriter-line inline-flex max-w-full flex-nowrap justify-center ${className}`}>
       {text.split("").map((char, index) => (
         <span
           key={`${char}-${index}`}
-          className="typewriter-letter inline-block"
-          style={{ animationDelay: `${index * 85}ms` }}
+          className="typewriter-letter shrink-0"
+          style={{ animationDelay: `${index * letterDelayMs}ms` }}
         >
           {char === " " ? "\u00A0" : char}
         </span>

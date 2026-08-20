@@ -340,10 +340,15 @@ body {
   }
 }
 
+.typewriter-line {
+  white-space: nowrap;
+}
+
 .typewriter-letter {
+  display: inline-block;
   opacity: 0;
   transform: translateY(0.35em);
-  animation: typewriter-letter-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: typewriter-letter-in 160ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes typewriter-letter-in {
