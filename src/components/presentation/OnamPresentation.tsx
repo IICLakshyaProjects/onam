@@ -55,11 +55,11 @@ export default function OnamPresentation() {
         return { ...prev, currentScene: SCENE_ORDER[idx + 1] };
       }
 
-      // We just finished the last scene ("date") — loop or stop.
+      // We just finished the last scene ("team-video") — loop or stay put.
       if (onamConfig.loop) {
         return { ...INITIAL_STATE, runId: prev.runId + 1 };
       }
-      return { ...prev, currentScene: "finished" };
+      return prev;
     });
   }, []);
 
