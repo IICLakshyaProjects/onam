@@ -7,7 +7,6 @@ export type Scene =
   | "poster"
   | "programs"
   | "teams"
-  | "team-video"
   | "date"
   | "finished";
 
@@ -19,7 +18,6 @@ export const SCENE_ORDER: Scene[] = [
   "reveal-video",
   "programs",
   "teams",
-  "team-video",
 ];
 
 export type PresentationState = {

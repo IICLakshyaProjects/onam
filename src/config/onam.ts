@@ -40,8 +40,7 @@ export const onamConfig = {
     // Hosted remotely (the local /public/media/previous-onam.mp4 copy was removed).
     // Swap back to a local "/media/previous-onam.mp4" path any time by dropping the file in public/media/.
     previousYearVideo: "https://lakshyamailerimages.s3.ap-south-1.amazonaws.com/Lakshyaarav+Promo+(1).mp4",
-    revealVideo: "/media/onam%20video%20countdown.mp4",
-    lastVideo: "/media/last.mp4",
+    revealVideo: "/media/onam%20count%20down.mp4",
     reelVideo: "/media/ONAM%20REEL%2001%20-%20Anandhu%20Ramesh.mp4",
     programsBgm: "/media/Onam%20Banger%20%20Baluccciii%20%20Himna%20Hilari%20%20Hinitha%20Hilary%20%20Chris%20Wayne%20%20Saina%20Music%20Indie.mp3",
     poster: "/media/onam-poster.png",
@@ -157,7 +156,7 @@ export const onamConfig = {
 
   teams: [
     { name: "Pathalam Passengers", image: "/media/team-1.png" },
-    { name: "Thrikkakara Appans", image: "/media/team-2.png" },
+    { name: "Thrikkakara Appan", image: "/media/team-2.png" },
     { name: "ON അല്ലെ🔥🔥🔥", image: "/media/team-3.png" },
     { name: "Mahabali Mafia", image: "/media/team-4.png" },
   ] satisfies Team[],

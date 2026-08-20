@@ -165,20 +165,6 @@ export default function SceneRenderer({
         />
       );
 
-    case "team-video":
-      return (
-        <PreviousYearVideo
-          key={key}
-          src={media.lastVideo}
-          fallbackDurationMs={durations.previousVideoFallback}
-          motifImages={media.motifImages}
-          videoMode="original"
-          paused={paused}
-          holdOnEnd
-          onComplete={onSceneComplete}
-        />
-      );
-
     case "date":
       return (
         <DateReveal
@@ -199,16 +185,22 @@ export default function SceneRenderer({
           <div className="glow-orb h-[42rem] w-[42rem]" />
           <RangoliGlow />
           <SpotlightSweep triggerKey="finished" />
-          <Particles density={48} paused={paused} />
-          <Petals density={20} paused={paused} />
-          <Confetti density={24} paused={paused} />
-          <Fireworks auto autoIntervalMs={1400} paused={paused} />
+          <Particles density={24} paused={paused} />
+          <Petals density={12} paused={paused} />
+          <Confetti density={16} paused={paused} />
+          <Fireworks auto autoIntervalMs={1800} paused={paused} />
           <ChendaBeat beatTrigger="finished" paused={paused} />
           <OnamMotifField
             types={["chenda", "pulikali", "lamp", "pookalam", "leaf", "boat"]}
             count={6}
             imageSrcs={media.motifImages}
           />
+          <div className="relative z-10 flex flex-col items-center px-8 text-center">
+            {/* <p className="text-xs uppercase tracking-[0.85em] text-onam-cream/70">Closing Message</p> */}
+            <h2 className="title-heading-in text-shimmer mt-6 text-5xl font-black uppercase tracking-[0.22em] sm:text-7xl">
+              Advance Happy Onam
+            </h2>
+          </div>
         </div>
       );
 
