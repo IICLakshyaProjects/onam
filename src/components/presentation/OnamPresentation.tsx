@@ -48,6 +48,10 @@ export default function OnamPresentation() {
     setState((prev) => {
       if (prev.currentScene === "finished") return prev;
 
+      if (prev.currentScene === "teams") {
+        return { ...prev, currentScene: "finished" };
+      }
+
       const idx = SCENE_ORDER.indexOf(prev.currentScene);
       const isLast = idx === SCENE_ORDER.length - 1;
 
@@ -55,7 +59,6 @@ export default function OnamPresentation() {
         return { ...prev, currentScene: SCENE_ORDER[idx + 1] };
       }
 
-      // We just finished the last scene ("team-video") — loop or stay put.
       if (onamConfig.loop) {
         return { ...INITIAL_STATE, runId: prev.runId + 1 };
       }
