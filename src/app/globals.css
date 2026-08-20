@@ -340,6 +340,25 @@ body {
   }
 }
 
+.typewriter-letter {
+  opacity: 0;
+  transform: translateY(0.35em);
+  animation: typewriter-letter-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes typewriter-letter-in {
+  0% {
+    opacity: 0;
+    transform: translateY(0.4em) scale(0.94);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
 .team-corner-in {
   animation: team-corner-in 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -358,6 +377,31 @@ body {
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.team-heading-in {
+  animation: team-heading-in 1000ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes team-heading-in {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.92);
+    letter-spacing: 0.9em;
+    filter: blur(10px);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(0) scale(1.02);
+    letter-spacing: 0.25em;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    letter-spacing: 0.25em;
     filter: blur(0);
   }
 }

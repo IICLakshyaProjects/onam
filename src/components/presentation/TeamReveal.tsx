@@ -56,16 +56,16 @@ export default function TeamReveal({
   onComplete,
   onIndexChange,
 }: TeamRevealProps) {
-  const [index, setIndex] = useState(0);
+  const [phase, setPhase] = useState(0);
 
   const durations =
-    teams.length === 0 ? [1] : teams.map((_, i) => (i === teams.length - 1 ? stepMs + outroMs : stepMs));
+    teams.length === 0 ? [1] : [stepMs, ...teams.map((_, i) => (i === teams.length - 1 ? stepMs + outroMs : stepMs))];
 
   usePausableSequence(
     durations,
     (i) => {
-      setIndex(i);
-      onIndexChange?.(i);
+      setPhase(i);
+      if (i > 0) onIndexChange?.(i - 1);
     },
     onComplete,
     paused,
@@ -74,7 +74,7 @@ export default function TeamReveal({
 
   if (teams.length === 0) return null;
 
-  const revealedTeams = teams.slice(0, index + 1);
+  const revealedTeams = phase === 0 ? [] : teams.slice(0, phase);
 
   return (
     <div className="onam-stage scene-enter flex flex-col items-center justify-center overflow-hidden">
@@ -82,19 +82,28 @@ export default function TeamReveal({
       <RangoliGlow />
       <Particles density={26} paused={paused} />
       <Petals density={14} paused={paused} />
-      <Confetti density={20} burstTrigger={`${index}`} paused={paused} />
-      <Fireworks burstTrigger={`${index}`} paused={paused} />
-      <ChendaBeat beatTrigger={`${index}`} paused={paused} />
-      <SpotlightSweep triggerKey={`${index}`} />
-      <OnamMotifField types={motifsForTeam(index)} count={6} imageSrcs={motifImages} />
+      <Confetti density={20} burstTrigger={`${phase}`} paused={paused} />
+      <Fireworks burstTrigger={`${phase}`} paused={paused} />
+      <ChendaBeat beatTrigger={`${phase}`} paused={paused} />
+      <SpotlightSweep triggerKey={`${phase}`} />
+      <OnamMotifField types={motifsForTeam(Math.max(phase - 1, 0))} count={6} imageSrcs={motifImages} />
 
-      <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">
-        Meet The Teams
-      </p>
+      <div
+        className={`team-heading-in absolute inset-0 z-10 flex items-center justify-center px-8 text-center transition-opacity duration-700 ${
+          phase === 0 ? "opacity-100" : "opacity-90"
+        }`}
+      >
+        <div className="rounded-full border border-onam-gold/25 bg-black/35 px-8 py-5 shadow-[0_0_45px_rgba(232,181,69,0.18)] backdrop-blur-md">
+          <p className="text-xs uppercase tracking-[0.9em] text-onam-cream/75">Teams</p>
+          <h2 className="text-shimmer mt-3 max-w-4xl text-5xl font-black uppercase tracking-[0.25em] sm:text-7xl">
+            Meet The Teams
+          </h2>
+        </div>
+      </div>
 
       {revealedTeams.map((team, teamIndex) => {
         const corner = CORNERS[teamIndex % CORNERS.length];
-        const isActive = teamIndex === index;
+        const isActive = teamIndex === phase - 1;
         return (
           <div
             key={team.name}
@@ -128,7 +137,7 @@ export default function TeamReveal({
         {teams.map((t, i) => (
           <span
             key={t.name}
-            className={`h-2 w-2 rounded-full transition-all duration-500 ${i <= index ? "w-8 bg-onam-gold" : "bg-onam-gold/30"}`}
+            className={`h-2 w-2 rounded-full transition-all duration-500 ${i < phase ? "w-8 bg-onam-gold" : "bg-onam-gold/30"}`}
           />
         ))}
       </div>

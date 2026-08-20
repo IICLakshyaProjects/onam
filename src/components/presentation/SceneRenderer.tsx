@@ -143,6 +143,7 @@ export default function SceneRenderer({
           introMs={durations.programIntroMs}
           bridgeMs={durations.programBridgeMs}
           stepMs={durations.programStepMs}
+          reelVideoSrc={media.reelVideo}
           motifImages={media.motifImages}
           paused={paused}
           onComplete={onSceneComplete}

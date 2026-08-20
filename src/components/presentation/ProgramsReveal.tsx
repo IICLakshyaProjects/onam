@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Program, onamConfig } from "@/config/onam";
 import { usePausableSequence } from "@/lib/usePausableSequence";
 import Petals from "@/components/effects/Petals";
@@ -17,6 +17,7 @@ type ProgramsRevealProps = {
   introMs: number;
   bridgeMs: number;
   stepMs: number;
+  reelVideoSrc: string;
   motifImages: (typeof onamConfig)["media"]["motifImages"];
   paused: boolean;
   onComplete: () => void;
@@ -24,7 +25,7 @@ type ProgramsRevealProps = {
 };
 
 const ENTRANCE_VARIANTS = ["reveal-rise", "reveal-slide-left", "reveal-slide-right", "reveal-zoom"] as const;
-const INTRO_ITEMS = ["REEL COMPETATION", "POOKALAM", "THIRUVATHIRA", "CHEND MELAM"] as const;
+const INTRO_ITEMS = ["REEL COMPETITION", "POOKALAM", "THIRUVATHIRA", "CHEND MELAM"] as const;
 const BRIDGE_ITEMS = ["Onam Sadhya", "Photoshoot Session", "Outdoor Games"] as const;
 
 export default function ProgramsReveal({
@@ -33,12 +34,14 @@ export default function ProgramsReveal({
   introMs,
   bridgeMs,
   stepMs,
+  reelVideoSrc,
   motifImages,
   paused,
   onComplete,
   onIndexChange,
 }: ProgramsRevealProps) {
   const [index, setIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const displayPrograms = programs.filter((program) => program.title !== "Chenda Melam");
 
   const culturalCount = Math.max(0, Math.min(sectionBreakIndex, displayPrograms.length));
@@ -53,14 +56,7 @@ export default function ProgramsReveal({
   const durations =
     programs.length === 0
       ? [introMs]
-      : [
-          introMs,
-          stepMs,
-          ...INTRO_ITEMS.map(() => stepMs),
-          ...programs.slice(0, culturalCount).map(() => stepMs),
-          bridgeMs,
-          ...BRIDGE_ITEMS.map(() => stepMs),
-        ];
+      : [introMs, stepMs, ...INTRO_ITEMS.map(() => stepMs), ...programs.slice(0, culturalCount).map(() => stepMs), bridgeMs, ...BRIDGE_ITEMS.map(() => stepMs)];
 
   usePausableSequence(
     durations,
@@ -92,6 +88,32 @@ export default function ProgramsReveal({
             ? culturalProgramIndex
             : index - 1) % ENTRANCE_VARIANTS.length
     ];
+  const showingReelBeat = index === introListStartIndex;
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (!showingReelBeat) {
+      video.pause();
+      video.currentTime = 0;
+      return;
+    }
+
+    video.muted = true;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  }, [showingReelBeat, reelVideoSrc]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (paused) {
+      video.pause();
+    } else if (showingReelBeat) {
+      video.play().catch(() => {});
+    }
+  }, [paused, showingReelBeat]);
 
   return (
     <div className="onam-stage scene-enter flex flex-col items-center justify-center">
@@ -105,9 +127,7 @@ export default function ProgramsReveal({
       <Fireworks burstTrigger={index} paused={paused} />
       <OnamMotifField types={["thiruvathira", "leaf", "boat", "sadya", "pookalam", "chenda"]} count={6} imageSrcs={motifImages} />
 
-      <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">
-        Programs &amp; Events
-      </p>
+      <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">Programs &amp; Events</p>
 
       {showingIntro ? (
         <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
@@ -119,11 +139,24 @@ export default function ProgramsReveal({
         </div>
       ) : showingIntroItem ? (
         <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
-          {/* <p className="text-sm uppercase tracking-[0.7em] text-onam-cream/70">ONAM Programs</p> */}
+          {showingReelBeat && (
+            <div className="absolute inset-0 -z-10 overflow-hidden rounded-[2rem] border border-onam-gold/20 bg-black/35">
+              <video
+                ref={videoRef}
+                className="h-full w-full object-cover opacity-75"
+                src={reelVideoSrc}
+                muted
+                playsInline
+                loop
+              />
+              <div className="absolute inset-0 bg-black/25" />
+            </div>
+          )}
           <div className="mt-8 min-h-24 flex items-center justify-center">
-            <span className="title-heading-in text-shimmer text-4xl font-black uppercase tracking-[0.28em] sm:text-6xl">
-              {INTRO_ITEMS[index - introListStartIndex]}
-            </span>
+            <TypewriterText
+              text={INTRO_ITEMS[index - introListStartIndex]}
+              className="title-heading-in text-shimmer text-4xl font-black uppercase tracking-[0.28em] sm:text-6xl"
+            />
           </div>
         </div>
       ) : showingCultureHeading ? (
@@ -139,11 +172,11 @@ export default function ProgramsReveal({
         </div>
       ) : showingBridgeItem ? (
         <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
-          {/* <p className="text-sm uppercase tracking-[0.7em] text-onam-cream/70">Following this event</p> */}
           <div className="mt-8 min-h-24 flex items-center justify-center">
-            <span className="title-heading-in text-shimmer text-4xl font-black uppercase tracking-[0.28em] sm:text-6xl">
-              {BRIDGE_ITEMS[index - bridgeItemStartIndex]}
-            </span>
+            <TypewriterText
+              text={BRIDGE_ITEMS[index - bridgeItemStartIndex]}
+              className="title-heading-in text-shimmer text-4xl font-black uppercase tracking-[0.28em] sm:text-6xl"
+            />
           </div>
         </div>
       ) : program ? (
@@ -173,6 +206,22 @@ export default function ProgramsReveal({
         </div>
       )}
     </div>
+  );
+}
+
+function TypewriterText({ text, className }: { text: string; className: string }) {
+  return (
+    <span className={className}>
+      {text.split("").map((char, index) => (
+        <span
+          key={`${char}-${index}`}
+          className="typewriter-letter inline-block"
+          style={{ animationDelay: `${index * 85}ms` }}
+        >
+          {char === " " ? "\u00A0" : char}
+        </span>
+      ))}
+    </span>
   );
 }
 

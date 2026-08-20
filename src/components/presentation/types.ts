@@ -20,7 +20,6 @@ export const SCENE_ORDER: Scene[] = [
   "programs",
   "teams",
   "team-video",
-  "date",
 ];
 
 export type PresentationState = {
