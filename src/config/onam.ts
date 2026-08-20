@@ -26,20 +26,21 @@ export const onamConfig = {
 
   /** Opening hook shown before the previous-year video. */
   titleHook: {
-    introCopy: "HI Lakshya......... Before we celebrate this year, let\u2019s revisit the moments that made last Onam unforgettable\u2026",
+    introCopy:
+      "Hi, Lakshya... Before we celebrate this year, let\u2019s revisit the moments that made last year\u2019s Onam unforgettable\u2026",
     lookbackTitle: "A Look Back at Lakshyaarav 2K25",
   },
 
   /** Short credit card shown after the first video finishes. */
   postVideoCredit: {
-    presentedBy: "Now here IIC Lakshya Presents",
+    presentedBy: "Now, IIC Lakshya Presents",
   },
 
   media: {
     // Hosted remotely (the local /public/media/previous-onam.mp4 copy was removed).
     // Swap back to a local "/media/previous-onam.mp4" path any time by dropping the file in public/media/.
     previousYearVideo: "https://lakshyamailerimages.s3.ap-south-1.amazonaws.com/Lakshyaarav+Promo+(1).mp4",
-    revileVideo: "/media/onam%20video%20countdown.mp4",
+    revealVideo: "/media/onam%20video%20countdown.mp4",
     lastVideo: "/media/last.mp4",
     reelVideo: "/media/ONAM%20REEL%2001%20-%20Anandhu%20Ramesh.mp4",
     programsBgm: "/media/Onam%20Banger%20%20Baluccciii%20%20Himna%20Hilari%20%20Hinitha%20Hilary%20%20Chris%20Wayne%20%20Saina%20Music%20Indie.mp3",
@@ -113,9 +114,9 @@ export const onamConfig = {
       icon: "soloSong",
     },
     {
-      title: "Sreeman & Malayala Manka",
+      title: "Sreeman & Malayali Manka",
       description: "The marquee cultural showcase celebrating tradition, grace, and stage presence.",
-      icon: "sreemanMalayalaManka",
+      icon: "sreemanMalayaliManka",
     },
     {
       title: "Sreeman - Individual / Solo Performance",
@@ -123,9 +124,9 @@ export const onamConfig = {
       icon: "sreemanSolo",
     },
     {
-      title: "Malayala Manka - Individual / Solo Performance",
-      description: "An individual showcase for Malayala Manka with elegance and expression.",
-      icon: "malayalaMankaSolo",
+      title: "Malayali Manka - Individual / Solo Performance",
+      description: "An individual showcase for Malayali Manka with elegance and expression.",
+      icon: "malayaliMankaSolo",
     },
     {
       title: "Instrumental Performance",
