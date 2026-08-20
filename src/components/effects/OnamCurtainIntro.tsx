@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useEffect, type CSSProperties } from "react";
 
 type OnamCurtainIntroProps = {
+  /** When true, the cinematic pull animation runs. */
+  opening: boolean;
   onComplete: () => void;
 };
 
@@ -12,29 +14,10 @@ const CURTAIN_PAUSE_MS = 500;
 const CURTAIN_OPEN_MS = 3500;
 
 /**
- * Theatrical Kerala/Onam stage curtain — stays closed until Enter is
- * pressed, then gathers from the center toward both sides.
+ * Theatrical Kerala/Onam stage curtain — opening is controlled by the parent
+ * (OnamExperience) so keyboard input can be blocked until the pull finishes.
  */
-export default function OnamCurtainIntro({ onComplete }: OnamCurtainIntroProps) {
-  const [opening, setOpening] = useState(false);
-
-  const beginOpening = useCallback(() => {
-    setOpening((current) => (current ? current : true));
-  }, []);
-
-  useEffect(() => {
-    if (opening) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Enter") return;
-      event.preventDefault();
-      beginOpening();
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [opening, beginOpening]);
-
+export default function OnamCurtainIntro({ opening, onComplete }: OnamCurtainIntroProps) {
   useEffect(() => {
     if (!opening) return;
 
