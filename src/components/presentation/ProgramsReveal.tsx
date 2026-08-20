@@ -17,7 +17,11 @@ type ProgramsRevealProps = {
   introMs: number;
   bridgeMs: number;
   stepMs: number;
-  reelVideoSrc: string;
+  reelVideoSrcs: {
+    left: string;
+    center: string;
+    right: string;
+  };
   motifImages: (typeof onamConfig)["media"]["motifImages"];
   paused: boolean;
   onComplete: () => void;
@@ -49,14 +53,14 @@ export default function ProgramsReveal({
   introMs,
   bridgeMs,
   stepMs,
-  reelVideoSrc,
+  reelVideoSrcs,
   motifImages,
   paused,
   onComplete,
   onIndexChange,
 }: ProgramsRevealProps) {
   const [index, setIndex] = useState(0);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const reelVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const displayPrograms = programs.filter((program) => program.title !== "Chenda Melam");
 
   const culturalCount = Math.max(0, Math.min(sectionBreakIndex, displayPrograms.length));
@@ -112,28 +116,34 @@ export default function ProgramsReveal({
     ];
   const showingReelBeat = index === introListStartIndex;
 
+  const reelVideoSources = [reelVideoSrcs.left, reelVideoSrcs.center, reelVideoSrcs.right];
+
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const videos = reelVideoRefs.current.filter(Boolean) as HTMLVideoElement[];
 
     if (!showingReelBeat) {
-      video.pause();
-      video.currentTime = 0;
+      for (const video of videos) {
+        video.pause();
+        video.currentTime = 0;
+      }
       return;
     }
 
-    video.muted = true;
-    video.currentTime = 0;
-    video.play().catch(() => {});
-  }, [showingReelBeat, reelVideoSrc]);
+    for (const video of videos) {
+      video.muted = true;
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    }
+  }, [showingReelBeat, reelVideoSrcs.left, reelVideoSrcs.center, reelVideoSrcs.right]);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const videos = reelVideoRefs.current.filter(Boolean) as HTMLVideoElement[];
+    if (videos.length === 0) return;
+
     if (paused) {
-      video.pause();
+      for (const video of videos) video.pause();
     } else if (showingReelBeat) {
-      video.play().catch(() => {});
+      for (const video of videos) video.play().catch(() => {});
     }
   }, [paused, showingReelBeat]);
 
@@ -152,15 +162,23 @@ export default function ProgramsReveal({
       <p className="absolute top-16 z-10 text-sm uppercase tracking-[0.6em] text-onam-gold/70">Programs &amp; Events</p>
 
       {showingReelBeat && (
-        <div className="pointer-events-none absolute inset-y-0 left-1/2 z-[5] w-full max-w-4xl -translate-x-1/2 overflow-hidden border-x border-onam-gold/20 bg-black/35">
-          <video
-            ref={videoRef}
-            className="h-full w-full object-cover opacity-75"
-            src={reelVideoSrc}
-            muted
-            playsInline
-            loop
-          />
+        <div className="pointer-events-none absolute inset-y-0 left-1/2 z-[5] w-full max-w-6xl -translate-x-1/2 overflow-hidden border-x border-onam-gold/20 bg-black/35">
+          <div className="grid h-full w-full grid-cols-3">
+            {reelVideoSources.map((src, i) => (
+              <div key={src} className="relative h-full min-w-0 border-onam-gold/15 [&:not(:last-child)]:border-r">
+                <video
+                  ref={(el) => {
+                    reelVideoRefs.current[i] = el;
+                  }}
+                  className="h-full w-full object-cover opacity-75"
+                  src={src}
+                  muted
+                  playsInline
+                  loop
+                />
+              </div>
+            ))}
+          </div>
           <div className="absolute inset-0 bg-black/25" />
         </div>
       )}

@@ -1,5 +1,5 @@
-import OnamPresentation from "@/components/presentation/OnamPresentation";
+import OnamExperience from "@/components/OnamExperience";
 
 export default function Home() {
-  return <OnamPresentation />;
+  return <OnamExperience />;
 }
