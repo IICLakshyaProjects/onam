@@ -26,7 +26,7 @@ type ProgramsRevealProps = {
 };
 
 const ENTRANCE_VARIANTS = ["reveal-rise", "reveal-slide-left", "reveal-slide-right", "reveal-zoom"] as const;
-const INTRO_ITEMS = ["REEL COMPETATION", "POOKALAM", "THIRUVATHIRA", "CHEND MELAM"] as const;
+const INTRO_ITEMS = ["REEL COMPETITION", "POOKALAM", "THIRUVATHIRA", "CHENDA MELAM"] as const;
 const BRIDGE_ITEMS = ["Onam Sadhya", "Photoshoot Session", "Outdoor Games"] as const;
 
 export default function ProgramsReveal({
@@ -195,7 +195,7 @@ export default function ProgramsReveal({
       ) : showingBridgeHeading ? (
         <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center gap-6 px-10 text-center">
           <p className="text-sm uppercase tracking-[0.7em] text-onam-cream/70">Following this event</p>
-          <h2 className="text-shimmer text-5xl font-black uppercase tracking-wide sm:text-7xl">We will be having</h2>
+          <h2 className="text-shimmer text-5xl font-black uppercase tracking-wide sm:text-7xl">We Will Have</h2>
         </div>
       ) : showingBridgeItem ? (
         <div className="reveal-rise relative z-10 flex max-w-4xl flex-col items-center px-10 text-center">
@@ -269,7 +269,7 @@ function renderProgramIcon(icon: string) {
           <path d="M30 12v28c0 5-4 8-9 8s-9-3-9-8 4-8 9-8c3 0 6 1 9 3V12h18v8H30" />
         </svg>
       );
-    case "sreemanMalayalaManka":
+    case "sreemanMalayaliManka":
       return (
         <svg viewBox="0 0 64 64" className={common} fill="none" stroke="currentColor" strokeWidth="2.5">
           <path d="M18 48c4-10 10-16 14-16s10 6 14 16" strokeLinecap="round" />
@@ -284,7 +284,7 @@ function renderProgramIcon(icon: string) {
           <path d="M32 24v20M24 34l8 6 8-6M28 44h8" strokeLinecap="round" />
         </svg>
       );
-    case "malayalaMankaSolo":
+    case "malayaliMankaSolo":
       return (
         <svg viewBox="0 0 64 64" className={common} fill="none" stroke="currentColor" strokeWidth="2.5">
           <path d="M22 20c0-4 4-8 10-8s10 4 10 8-4 8-10 8-10-4-10-8Z" />

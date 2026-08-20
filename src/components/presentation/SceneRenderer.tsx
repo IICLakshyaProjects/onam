@@ -86,11 +86,11 @@ export default function SceneRenderer({
         />
       );
 
-    case "revile-video":
+    case "reveal-video":
       return (
         <PreviousYearVideo
           key={key}
-          src={media.revileVideo}
+          src={media.revealVideo}
           fallbackDurationMs={durations.previousVideoFallback}
           motifImages={media.motifImages}
           videoMode="enlarged"
