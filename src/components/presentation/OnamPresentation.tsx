@@ -22,8 +22,19 @@ const INITIAL_STATE: PresentationState = {
  * plus its own internal timing, so there is exactly one source of truth for
  * where the show is and no scattered/duplicated timer logic.
  */
-export default function OnamPresentation() {
+type OnamPresentationProps = {
+  /** Keeps scene timers/effects paused until the curtain intro finishes. */
+  holdPlayback?: boolean;
+  /** Disables operator keyboard shortcuts while the curtain is active. */
+  controlsDisabled?: boolean;
+};
+
+export default function OnamPresentation({
+  holdPlayback = false,
+  controlsDisabled = false,
+}: OnamPresentationProps = {}) {
   const [state, setState] = useState<PresentationState>(INITIAL_STATE);
+  const effectivePaused = state.paused || holdPlayback;
 
   const goToScene = useCallback((scene: Scene) => {
     setState((prev) => ({ ...prev, currentScene: scene }));
@@ -98,13 +109,14 @@ export default function OnamPresentation() {
       <SceneRenderer
         scene={state.currentScene}
         runId={state.runId}
-        paused={state.paused}
+        paused={effectivePaused}
         onSceneComplete={nextScene}
         onCountdownValueChange={setCountdownValue}
         onProgramIndexChange={setCurrentProgram}
         onTeamIndexChange={setCurrentTeam}
       />
       <PresentationControls
+        disabled={controlsDisabled}
         onTogglePause={togglePause}
         onNext={nextScene}
         onPrevious={previousScene}

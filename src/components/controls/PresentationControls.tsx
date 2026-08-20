@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { SCENE_ORDER } from "@/components/presentation/types";
 
 type PresentationControlsProps = {
+  disabled?: boolean;
   onTogglePause: () => void;
   onNext: () => void;
   onPrevious: () => void;
@@ -25,6 +26,7 @@ type PresentationControlsProps = {
  *   1-7          jump directly to a scene (dev/testing aid)
  */
 export default function PresentationControls({
+  disabled = false,
   onTogglePause,
   onNext,
   onPrevious,
@@ -33,6 +35,8 @@ export default function PresentationControls({
 }: PresentationControlsProps) {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (disabled) return;
+
       // Avoid hijacking typing if a future dev UI ever adds inputs.
       const target = event.target as HTMLElement | null;
       if (target && ["INPUT", "TEXTAREA"].includes(target.tagName)) return;
@@ -73,7 +77,7 @@ export default function PresentationControls({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onTogglePause, onNext, onPrevious, onRestart, onJumpToScene]);
+  }, [disabled, onTogglePause, onNext, onPrevious, onRestart, onJumpToScene]);
 
   return null;
 }
